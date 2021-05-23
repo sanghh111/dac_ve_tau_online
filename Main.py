@@ -1,7 +1,10 @@
-from tkinter import *
+from re import A
+from tkinter import * 
 from tkinter import ttk
 from datetime import datetime
+from typing import List, NewType
 from db import *
+from tkinter.constants import DISABLED, NORMAL
 # import threading
 
 class App(Frame):
@@ -46,6 +49,7 @@ class App(Frame):
         Button(self.master, text = "Tim kiem ve", command=self.timKiem).place(relx=0.66,rely=0)
         self.can=Canvas(self.master,bg='MediumPurple1',width=600,height=345,highlightbackground='MediumPurple1',highlightthickness=0)
         self.can.place(x=0,y=55)
+        # self.master.bind('<Motion>',self.location)
         self.master.mainloop()
 
     def dacVeTau(self):
@@ -100,6 +104,7 @@ class App(Frame):
         if(self.trangThai[1]== None):
             self.kiemTraTrangThai(1)
             self.trangThai[1]=1
+
             self.title_tt = Label(self.can,text="Thanh toan ve tau",background='MediumPurple1')
             self.label_tt = Label(self.can,text="Ma dat truoc",background='MediumPurple1')
             self.entry_tt = Entry(self.can)
@@ -114,7 +119,6 @@ class App(Frame):
             self.hienThiThanhToan()
         else:
             pass
-
 
     def timKiem(self):
         if(self.trangThai[2]==None):
@@ -134,16 +138,8 @@ class App(Frame):
         else:
             pass
 
-
-
-# Line [2,....,n] la Line cua tim ve
-
     def timVe(self):
         ngayThangNam = str(self.nam.get())+"-"+str(self.thang.get())+"-"+str(self.ngay.get())
-        # print(ngayThangNam)
-        # print(self.tenGa[self.cbb_dv[0].current()][0])
-        # print(self.tenGa[self.cbb_dv[0].current()][0])
-        # self.ket_qua = select_CD(self.cur,ngayThangNam,self.tenGa[self.cbb_dv[0].current()][0],self.tenGa[self.cbb_dv[1].current()][0])
         self.ket_qua = select_CD(self.cur,"2021-5-12",self.tenGa[self.cbb_dv[0].current()][0],self.tenGa[self.cbb_dv[1].current()][0])
         if(self.ket_qua):
             self.ket_qua=self.ket_qua.fetchall()
@@ -325,7 +321,370 @@ class App(Frame):
             self.radbu_timVe[i] = Radiobutton(self.can_tv,value =self.giaTri_radbu[i],variable=self.giaTriChon,command=self.onClick,highlightthickness=0)
             self.radbu_timVe[i].place(x=305,y=0+Y+3)
             Y+=30
+
     def onClick(self):
-        print(self.giaTriChon.get())
-        
+        self.thongTinVe = Select_Ve(self.cur,self.ket_qua[self.giaTriChon.get()][0])
+        if(self.thongTinVe==[]):
+            self.tatDanhSachDatVe()
+        self.loadLaiHienThiTau()
+        if(self.thongTinVe!=[]):
+            self.viTritoa=0
+            self.hienThiToaTau()
+        else:
+            print("không có")
+            pass
+    
+    def hienThiToaTau(self):
+        self.trangThaiToa = True
+        if(self.viTritoa==0):
+            self.btnToaBack=Button(self.can,text="trang trước",highlightthickness=0,command=self.backToa)
+            self.btnToaNext=Button(self.can,text="trang tiếp",highlightthickness=0,command=self.nextToa)
+            self.btnOk = Button(self.can,text="chấp nhận",highlightthickness=0,command=self.oK)
+            self.title_toa=Label(self.can,text="",width=30)
+            chuoi=(self.thongTinVe[0][2]+"-"+str(self.thongTinVe[0][4])+"VND")
+            self.title_toa['text']=chuoi
+            self.btnToaBack.place(x=0,y=252)
+            self.btnToaNext.place(x=567,y=252)
+            self.title_toa.place(x=200,y=205)
+            self.btnOk.place(x=520,y=325)
+            hcn1 =self.can.create_rectangle(40,200,560,325)
+            hcn2 = self.can.create_rectangle(60,210,540,315)
+            try:
+                self.line_toa[0]=hcn1
+            except:
+                self.line_toa.append(hcn1)
+            try:
+                self.line_toa[1]=hcn2
+            except:
+                self.line_toa.append(hcn2)
+            for i in range(16):
+                for j in range(4):
+                    dem = i*4+j+1
+                    a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem)
+                    a.place(x=75+i*29,y=230+j*20)
+                    if(self.thongTinVe[dem-1][3]=="Trống"):
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                    else:
+                        a["state"]=DISABLED
+                        a["bg"]= 'red'
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                line_toa=self.can.create_line(74+i*29,230,74+i*29,310)
+                try:
+                    self.line_toa[i+2]=line_toa
+                except:
+                    self.line_toa.append(line_toa)
+        elif(self.viTritoa==1):
+            self.btnToaBack.place(x=0,y=252)
+            self.btnToaNext.place(x=567,y=252)
+            self.title_toa.place(x=200,y=205)
+            self.btnOk.place(x=520,y=325)
+            try:
+                self.line_toa[0]=self.can.create_rectangle(40,200,560,325)
+                self.line_toa[1]=self.can.create_rectangle(45,210,555,315)
+            except:
+                self.line_toa.append(self.can.create_rectangle(40,200,560,325))
+                self.line_toa.append(self.can.create_rectangle(45,210,555,315)) 
+            chuoi=(self.thongTinVe[64][2]+"-"+str(self.thongTinVe[64][4])+"VND")
+            self.title_toa['text']=chuoi
+            for i in range(20):
+                for j in range(4):
+                    dem = i*4+j+1
+                    a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
+                    a.place(x=53+i*25,y=230+j*20)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem+64-1)
+                    if(self.thongTinVe[dem-1+64][3]=="Trống"):
+                        try:
+                            self.button_ve[dem-1+64]=a
+                        except:
+                            self.button_ve.append(a)
+                    else:
+                        a["state"]=DISABLED
+                        a["bg"]= 'red'
+                        try:
+                            self.button_ve[dem-1+64]=a
+                        except:
+                            self.button_ve.append(a)
+                line_toa=self.can.create_line(52+i*25,230,52+i*25,310)
+                try:
+                    self.line_toa[i+2]=line_toa
+                except:
+                    self.line_toa.append(line_toa)
+        elif(self.viTritoa==2):#bien dem cho line
+            chuoi=(self.thongTinVe[144][2]+"-"+str(self.thongTinVe[144][4])+"VND")
+            self.title_toa['text']=chuoi
+            self.btnToaBack.place(x=0,y=252)
+            self.btnToaNext.place(x=567,y=252)
+            self.title_toa.place(x=200,y=205)
+            self.btnOk.place(x=520,y=325)
+            try:
+                self.line_toa[0]=self.can.create_rectangle(40,200,560,325)
+                self.line_toa[1]=self.can.create_rectangle(60,210,540,315)
+            except:
+                self.line_toa.append(self.can.create_rectangle(40,200,560,325))
+                self.line_toa.append(self.can.create_rectangle(60,210,540,315))
+            for i in range(11):
+                for j in range(2):
+                    dem = i*2+j+1
+                    a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=144+dem-1)
+                    a.place(x=63+i*35,y=230+j*40)
+                    if(self.thongTinVe[dem-1+144][3]=="Trống"):
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                    else:
+                        a["state"]=DISABLED
+                        a["bg"]= 'red'
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                    line_toa=self.can.create_line(62+i*35,230+j*40,62+i*35,260+j*40)
+                    try:
+                        self.line_toa[i*2+j+3]=line_toa
+                    except:
+                        self.line_toa.append(line_toa)
+        elif(self.viTritoa==3):#bien dem cho line
+            chuoi=(self.thongTinVe[168][2]+"-"+str(self.thongTinVe[172][4])+"VND")
+            self.title_toa['text']=chuoi
+            self.btnToaBack.place(x=0,y=252)
+            self.btnToaNext.place(x=567,y=252)
+            self.title_toa.place(x=200,y=205)
+            self.btnOk.place(x=520,y=325)
+            self.line_toa.append(self.can.create_rectangle(40,200,560,325))
+            self.line_toa.append(self.can.create_rectangle(60,210,540,315))
+            for i in range(14):
+                for j in range(3):
+                    dem = i*3+j+1
+                    a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=172+dem-1)
+                    a.place(x=63+i*35,y=230+j*40)
+                    print(dem-1+168)
+                    if(self.thongTinVe[dem-1+168][3]=="Trống"):
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                    else:
+                        a["state"]=DISABLED
+                        a["bg"]= 'red'
+                        try:
+                            self.button_ve[dem-1]=a
+                        except:
+                            self.button_ve.append(a)
+                    line_toa=self.can.create_line(62+i*35,230+j*40,62+i*35,260+j*40)
+                    try:
+                        self.line_toa[i+2]=line_toa
+                    except:
+                        self.line_toa.append(line_toa)
+
+    def location(self,event):
+        print(event.x,event.y)
+
+    def nextToa(self):
+        if(self.viTritoa<3):
+            print("next")
+            self.loadLaiHienThiTau()
+            self.viTritoa+=1
+            self.hienThiToaTau()
+
+    def backToa(self):
+        if(self.viTritoa>0):
+            self.loadLaiHienThiTau()
+            self.viTritoa-=1
+            self.hienThiToaTau()
+
+    def loadLaiHienThiTau(self):
+        try:
+            self.title_toa
+        except:
+             self.title_toa=None
+             self.button_ve =[]
+             self.line_toa = []
+        if(self.title_toa!=None ):
+            self.title_toa.place_forget()
+            self.title_toa['text']=""
+            self.btnToaBack.place_forget()
+            self.btnToaNext.place_forget()
+            for i in self.button_ve:
+                i.place_forget()
+            for i in self.line_toa:
+                self.can.delete(i)
+
+    def callBackOnClickChoNgoi(self,**kw):
+        def __callback():
+            return self.onClickChoNgoi(kw)
+        return __callback
+
+    def onClickChoNgoi(self, kw):
+        try :
+            self.danhSachVeChon
+        except:
+            self.danhSachVeChon=[]
+            self.soLgDaChon=0
+            self.danhSachVe=None
+            self.LabelDanhSachChonVe=[]
+        if self.danhSachVe==None:
+            self.danhSachVe=DanhSachVe(Toplevel(),object=self)
+        else:
+            if kw['dem'] in self.danhSachVeChon:
+                print("true")
+                kw['btn']['bg']='blue'
+                index= self.danhSachVeChon.index(kw['dem'])
+                self.danhSachVeChon.remove(kw['dem'])
+                self.LabelDanhSachChonVe[index].pack_forget()
+                self.LabelDanhSachChonVe.remove(self.LabelDanhSachChonVe[index])
+                self.danhSachVe.master.update()
+                return
+        self.danhSachVeChon.append(kw['dem'])
+        kw['btn']['bg']='yellow'
+        self.soLgDaChon+=1
+        a=(Label(self.danhSachVe.master,text=kw['dem']))
+        print(kw['dem'])
+        a.pack()
+        self.danhSachVe.master.update()
+        try:
+            self.LabelDanhSachChonVe[self.soLgDaChon]=a
+        except:
+            self.LabelDanhSachChonVe.append(a)
+
+    def nhanTinHieu(self,**kw):
+        return kw['object']
+
+
+    def tatDanhSachDatVe(self):
+        try :
+            self.trangThaiToa
+        except:
+            self.trangThaiToa=False
+        if self.trangThaiToa:
+            self.danhSachVe.master.destroy()
+            # self.danhSachVe.__del__()
+            self.soLgDaChon=0
+            self.danhSachVeChon.clear()
+            self.LabelDanhSachChonVe.clear()
+            self.danhSachVeChon=[]
+            self.LabelDanhSachChonVe=[]
+            self.danhSachVe=None
+
+    def oK(self):
+        danhSachVeChon = []
+        for i in self.danhSachVeChon:
+            print(i)
+            danhSachVeChon.append(self.thongTinVe[i])
+            print(self.thongTinVe[i])
+        uIkhachHang=UInhapThongTin(Toplevel(),object=self)
+        uIkhachHang.nhanTTVe(danhSachVeChon)
+    
+
+
+class DanhSachVe(Frame):
+    def __init__(self,master,**kw):
+        self.master = master
+        self.guiTinHieu(kw)
+        self.display()
+
+    def display(self):
+        Label(self.master,text='DANH SÁCH VÉ CHỌN').pack()
+        self.master.mainloop
+
+    def guiTinHieu(self,kw):
+        kw['object'].nhanTinHieu(object=self)
+
+
+class UInhapThongTin(Frame):
+    def __init__(self,master,**kw):
+        self.master = master
+        self.guiTinHieu(kw)
+        self.veDaChon = None
+        self.labelKH = []
+        self.valueKH = []
+        self.entry = []
+        self.ngay = []
+        self.thang = []
+        self.nam = []
+        self.cbb = []
+        for i in range(1,32,1):
+            self.ngay.append(i)
+        for i in range(1,13,1):
+            self.thang.append(i)
+        for i in range(1950,2020,1):
+            self.nam.append(i)
+        self.display()
+
+    def display(self):
+        a=Label(self.master)
+        a.grid(column=0,row=0)
+        self.title=a
+        self.master.mainloop
+
+    def guiTinHieu(self,kw):
+        kw['object'].nhanTinHieu(object=self)
+
+    def nhanTTVe(self,danhSach):
+        self.veDaChon = danhSach
+        print(self.veDaChon)
+        self.themDisplay()
+
+    def themDisplay(self):
+        self.Dem = 0
+        self.title['text']=self.veDaChon[self.Dem][0]
+        a= Label(self.master,text="TenKH:")
+        b= Label(self.master,text="Cmnd:")
+        c= Label(self.master,text="NgaySinh")
+        a.grid(column=0,row=1)
+        b.grid(column=0,row=2)
+        c.grid(column=0,row=3)
+        self.labelKH.append([a,b,c])
+        self.valueKH.append([StringVar(),StringVar(),IntVar(),IntVar(),IntVar()])
+        a= (Entry(self.master,textvariable=self.valueKH[self.Dem][0]))
+        a.grid(column=1,row=1)
+        b= (Entry(self.master,textvariable=self.valueKH[self.Dem][1]))
+        b.grid(column=1,row=2)
+        c= ttk.Combobox(self.master,width=2,textvariable=self.valueKH[self.Dem][2],values=self.ngay)
+        c.grid(column=2,row=3)
+        d= ttk.Combobox(self.master,width=2,textvariable=self.valueKH[self.Dem][3],values=self.thang)
+        d.grid(column=3,row=3)
+        e= ttk.Combobox(self.master,width=6,textvariable=self.valueKH[self.Dem][4],values=self.nam)
+        e.grid(column=4,row=3)
+        d.bind("<<ComboboxSelected>>",self.thayDoiNgay)
+        e.bind("<<ComboboxSelected>>",self.thayDoiNgay)
+        #  self.cbb_dv[0]=ttk.Combobox(self.can,width=17,textvariable=self.giaTriGaDen,values=tenGa)
+        self.entry.append([a,b])
+        self.cbb.append([c,d,e])
+        Button(self.master,text="Trang tiep").grid(column=4,row=4)
+
+    def thayDoiNgay(self,event):
+        if(self.valueKH[self.Dem][3].get() in [2,4,6,9,11]):#thang
+            if(self.valueKH[self.Dem][3].get()==2):#thang
+                if(self.valueKH[self.Dem][4].get()%4==0):#nam
+                    if(len(self.ngay)>29):#ngay
+                        for i in range(len(self.ngay),29):
+                            self.ngay.remove(i)
+                    elif(len(self.ngay)<29):
+                            self.ngay.append(29)
+                else:
+                    if(len(self.ngay)>28):
+                        for i in range(len(self.ngay),28):
+                            self.ngay.remove(i)
+            else: 
+                if(len(self.ngay)>30):#ngay
+                    for i in range(len(self.ngay),30):
+                        self.ngay.remove(i)
+                elif(len(self.ngay)<30):
+                    for i in range(len(self.ngay),30+1):
+                        self.ngay.append(i)
+        else:
+            if(len(self.ngay)<31):
+                for i in range(len(self.ngay),31+1):
+                    self.ngay.append(i)
+        self.cbb[self.Dem][0].update()
 App(Tk())
