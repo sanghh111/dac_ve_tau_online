@@ -104,7 +104,6 @@ class App(Frame):
         if(self.trangThai[1]== None):
             self.kiemTraTrangThai(1)
             self.trangThai[1]=1
-
             self.title_tt = Label(self.can,text="Thanh toan ve tau",background='MediumPurple1')
             self.label_tt = Label(self.can,text="Ma dat truoc",background='MediumPurple1')
             self.entry_tt = Entry(self.can)
