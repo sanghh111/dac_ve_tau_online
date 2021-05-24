@@ -1,3 +1,4 @@
 a = ["1","4","3"]
 # a.remove(a[1])
-print(a.clear())
+del(a)
+print(a.remove())
