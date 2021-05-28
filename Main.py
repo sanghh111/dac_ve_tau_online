@@ -341,14 +341,12 @@ class App(Frame):
         if(self.viTritoa==0):
             self.btnToaBack=Button(self.can,text="trang trước",highlightthickness=0,command=self.backToa)
             self.btnToaNext=Button(self.can,text="trang tiếp",highlightthickness=0,command=self.nextToa)
-            self.btnOk = Button(self.can,text="chấp nhận",highlightthickness=0,command=self.oK)
             self.title_toa=Label(self.can,text="",width=30)
             chuoi=(self.thongTinVe[0][2]+"-"+str(self.thongTinVe[0][4])+"VND")
             self.title_toa['text']=chuoi
             self.btnToaBack.place(x=0,y=252)
             self.btnToaNext.place(x=567,y=252)
             self.title_toa.place(x=200,y=205)
-            self.btnOk.place(x=520,y=325)
             hcn1 =self.can.create_rectangle(40,200,560,325)
             hcn2 = self.can.create_rectangle(60,210,540,315)
             try:
@@ -386,7 +384,6 @@ class App(Frame):
             self.btnToaBack.place(x=0,y=252)
             self.btnToaNext.place(x=567,y=252)
             self.title_toa.place(x=200,y=205)
-            self.btnOk.place(x=520,y=325)
             try:
                 self.line_toa[0]=self.can.create_rectangle(40,200,560,325)
                 self.line_toa[1]=self.can.create_rectangle(45,210,555,315)
@@ -400,7 +397,7 @@ class App(Frame):
                     dem = i*4+j+1
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
                     a.place(x=53+i*25,y=230+j*20)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem+64-1)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem+64)
                     if(self.thongTinVe[dem-1+64][3]=="Trống"):
                         try:
                             self.button_ve[dem-1+64]=a
@@ -424,7 +421,6 @@ class App(Frame):
             self.btnToaBack.place(x=0,y=252)
             self.btnToaNext.place(x=567,y=252)
             self.title_toa.place(x=200,y=205)
-            self.btnOk.place(x=520,y=325)
             try:
                 self.line_toa[0]=self.can.create_rectangle(40,200,560,325)
                 self.line_toa[1]=self.can.create_rectangle(60,210,540,315)
@@ -434,12 +430,13 @@ class App(Frame):
             for i in range(11):
                 for j in range(2):
                     dem = i*2+j+1
+                    print(dem)
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=144+dem-1)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=144+dem)
                     a.place(x=63+i*35,y=230+j*40)
                     if(self.thongTinVe[dem-1+144][3]=="Trống"):
                         try:
-                            self.button_ve[dem-1]=a
+                            self.button_ve[dem-1+144]=a
                         except:
                             self.button_ve.append(a)
                     else:
@@ -460,19 +457,17 @@ class App(Frame):
             self.btnToaBack.place(x=0,y=252)
             self.btnToaNext.place(x=567,y=252)
             self.title_toa.place(x=200,y=205)
-            self.btnOk.place(x=520,y=325)
             self.line_toa.append(self.can.create_rectangle(40,200,560,325))
             self.line_toa.append(self.can.create_rectangle(60,210,540,315))
             for i in range(14):
                 for j in range(3):
                     dem = i*3+j+1
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=172+dem-1)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=172+dem)
                     a.place(x=63+i*35,y=230+j*40)
-                    print(dem-1+168)
-                    if(self.thongTinVe[dem-1+168][3]=="Trống"):
+                    if(self.thongTinVe[dem-1+172][3]=="Trống"):
                         try:
-                            self.button_ve[dem-1]=a
+                            self.button_ve[dem-1+172]=a
                         except:
                             self.button_ve.append(a)
                     else:
@@ -527,287 +522,88 @@ class App(Frame):
         return __callback
 
     def onClickChoNgoi(self, kw):
-        self.trangThaiToa = True
-        try :
-            self.danhSachVe
-        except:
-            self.danhSachVeChon=[]
-            self.soLgDaChon=0
-            self.danhSachVe=None
-            self.LabelDanhSachChonVe=[]
-        if self.danhSachVe==None:
-            self.danhSachVe=DanhSachVe(Toplevel(),object=self)
+        self.taoViewDSC()
+        if(kw['dem'] not in self.DSC):
+            print("chua co")
+            self.DSC.append(kw['dem'])
+            self.ViewDSC.themGhe(kw['dem'],self.thongTinVe[kw['dem']-1][4])
+            self.button_ve[kw['dem']-1]['bg']='RosyBrown3'
         else:
-            if kw['dem'] in self.danhSachVeChon:
-                print("true")
-                kw['btn']['bg']='blue'
-                index= self.danhSachVeChon.index(kw['dem'])
-                self.danhSachVeChon.remove(kw['dem'])
-                self.LabelDanhSachChonVe[index].pack_forget()
-                self.LabelDanhSachChonVe.remove(self.LabelDanhSachChonVe[index])
-                self.danhSachVe.master.update()
-                return
-        self.danhSachVeChon.append(kw['dem'])
-        kw['btn']['bg']='yellow'
-        self.soLgDaChon+=1
-        a=(Label(self.danhSachVe.master,text=kw['dem']))
-        print(kw['dem'])
-        a.pack()
-        self.danhSachVe.master.update()
-        try:
-            self.LabelDanhSachChonVe[self.soLgDaChon]=a
-        except:
-            self.LabelDanhSachChonVe.append(a)
+            print("Co so: ",self.DSC.index(kw['dem']))
+            self.ViewDSC.xoaGhe(self.DSC.index(kw['dem']))
+            self.DSC.remove(kw['dem'])
+            self.button_ve[kw['dem']-1]['bg']='blue'
 
     def nhanTinHieu(self,**kw):
         return kw['object']
 
-
     def tatDanhSachDatVe(self):
-        self.danhSachVe.master.destroy()
-        del(self.danhSachVe)
-        self.soLgDaChon=0
-        self.danhSachVeChon.clear()
-        self.LabelDanhSachChonVe.clear()
-        self.danhSachVeChon=[]
-        self.LabelDanhSachChonVe=[]
-        self.btn=[]
-        self.trangThaiToa = False
-        # print(self.danhSachVe)
-        # self.danhSachVe
+        pass
 
-    def oK(self):
-        danhSachVeChon = []
-        for i in self.danhSachVeChon:
-            print(i)
-            danhSachVeChon.append(self.thongTinVe[i-1])
-            print(self.thongTinVe[i])
-        uIkhachHang=UInhapThongTin(Toplevel(),object=self)
-        uIkhachHang.nhanTTVe(danhSachVeChon)
-    
-
+    def taoViewDSC(self):
+        try:
+            self.ViewDSC
+        except:
+            self.ViewDSC=None
+        if(self.ViewDSC==None):
+            self.ViewDSC=DanhSachVe(Toplevel(),object=self)
+            self.DSC = []
 
 class DanhSachVe(Frame):
     def __init__(self,master,**kw):
         self.master = master
         self.guiTinHieu(kw)
+        self.lbGhe = []
         self.display()
 
     def display(self):
-        Label(self.master,text='DANH SÁCH VÉ CHỌN').pack()
+        Label(self.master,text='DANH SÁCH VÉ CHỌN').grid(column=0,columnspan=3,row=0)
+        Label(self.master,text="Số ghế",bg="blue",width=10).grid(column=0,row=1,sticky=W)
+        Label(self.master,text="Giá",bg="red",width=20).grid(column=1,row=1,sticky=W)
+        self.btnDT = Button(self.master,text="Đặt trước")
+        self.btnTT = Button(self.master,text="Thanh toán")
+        self.demRow=2
         self.master.mainloop
 
     def guiTinHieu(self,kw):
         kw['object'].nhanTinHieu(object=self)
+
+    def themGhe(self,soGhe,gia):
+        tam1=Label(self.master,text=soGhe)
+        tam1.grid(column=0,row=self.demRow)
+        tam2=Label(self.master,text=gia)
+        tam2.grid(column=1,row=self.demRow)
+        if(self.btnDT.grid_info() != {}):
+            self.btnDT.grid_forget()
+            self.btnTT.grid_forget()
+        self.btnDT.grid(column=0,row=self.demRow+1,sticky=W)
+        self.btnTT.grid(column=3,row=self.demRow+1,sticky=E)
+        self.demRow+=1
+        self.lbGhe.append((tam1,tam2))
+        pass
+    
+    def xoaGhe(self,viTri):
+        a=self.lbGhe[viTri]
+        a[0].grid_forget()
+        a[1].grid_forget()
+        self.btnDT.grid_forget()
+        self.btnTT.grid_forget()
+        print("self.demRow=",self.demRow)
+        for i in range(viTri,self.demRow-3):
+            # print(i)
+            self.lbGhe[i+1][0].grid_forget()
+            self.lbGhe[i+1][1].grid_forget()
+            self.lbGhe[i+1][0].grid(column=0,row=i+2)
+            self.lbGhe[i+1][1].grid(column=1,row=i+2)
+        self.btnDT.grid(column=0,row=self.demRow,sticky=W)
+        self.btnTT.grid(column=3,row=self.demRow,sticky=E)
+        self.demRow-=1
+        self.lbGhe.remove(a)
 
     def __del__(self):
         return None
 
 
-class UInhapThongTin(Frame):
-    def __init__(self,master,**kw):
-        self.master = master
-        self.guiTinHieu(kw)
-        self.veDaChon = None
-        self.labelGT = []
-        self.valueKH = []
-        self.entry = []
-        self.ngay = []
-        self.thang = []
-        self.nam = []
-        self.cbb = []
-        self.btn = []
-        for i in range(1,32,1):
-            self.ngay.append(i)
-        for i in range(1,13,1):
-            self.thang.append(i)
-        for i in range(1950,2020,1):
-            self.nam.append(i)
-        self.display()
-
-    def display(self):
-        a=Label(self.master)
-        a.grid(column=0,row=0)
-        self.title=a
-        self.master.mainloop
-
-    def guiTinHieu(self,kw):
-        kw['object'].nhanTinHieu(object=self)
-
-    def nhanTTVe(self,danhSach):
-        self.veDaChon = danhSach
-        print(self.veDaChon)
-        self.themDisplay()
-
-    def themDisplay(self):
-        self.Dem = 0
-        self.title['text']=self.veDaChon[self.Dem][0]
-        a= Label(self.master,text="TenKH:")
-        b= Label(self.master,text="Cmnd:")
-        c= Label(self.master,text="NgaySinh")
-        a.grid(column=0,row=1)
-        b.grid(column=0,row=2)
-        c.grid(column=0,row=3)
-        self.labelGT.append(a)
-        self.labelGT.append(b)
-        self.labelGT.append(c)
-        self.valueKH.append([StringVar(),StringVar(),IntVar(),IntVar(),IntVar()])
-        a= (Entry(self.master,textvariable=self.valueKH[self.Dem][0]))
-        a.grid(column=1,row=1)
-        b= (Entry(self.master,textvariable=self.valueKH[self.Dem][1]))
-        b.grid(column=1,row=2)
-        c= ttk.Combobox(self.master,width=2,textvariable=self.valueKH[self.Dem][2],values=self.ngay)
-        c.grid(column=2,row=3)
-        d= ttk.Combobox(self.master,width=2,textvariable=self.valueKH[self.Dem][3],values=self.thang)
-        d.grid(column=3,row=3)
-        e= ttk.Combobox(self.master,width=6,textvariable=self.valueKH[self.Dem][4],values=self.nam)
-        e.grid(column=4,row=3)
-        # if
-        #  self.cbb_dv[0]=ttk.Combobox(self.can,width=17,textvariable=self.giaTriGaDen,values=tenGa)
-        self.entry.append(a)
-        self.entry.append(b)
-        self.cbb.append(c)
-        self.cbb.append(d)
-        self.cbb.append(e)
-        self.btn.append(Button(self.master,text="Trang tiếp",command=self.trangTiep))
-        self.btn.append(Button(self.master,text="Trang trước",command=self.trangTruoc))
-        self.btn.append(Button(self.master,text="Dặt Trước",command= self.datTruoc))
-        self.btn.append(Button(self.master,text="Thanh Toán",command=self.thanhToan))
-        self.btn[0].grid(column=4,row=4)
-        self.btn[1].grid(column=0,row=4)
-        self.btn[2].grid(column=2,row=4)
-        self.btn[3].grid(column=3,row=4)
-
-    def trangTiep(self):
-        if self.Dem+1 != len(self.veDaChon):
-            self.Dem+=1
-            try:
-                self.valueKH[self.Dem]
-            except:
-                self.valueKH.append([StringVar(),StringVar(),IntVar(),IntVar(),IntVar()])
-            self.title['text']=self.veDaChon[self.Dem][0]
-            self.entry[0]['textvariable']=self.valueKH[self.Dem][0]
-            self.entry[1]['textvariable']=self.valueKH[self.Dem][1]
-            self.cbb[0]['textvariable']=self.valueKH[self.Dem][2]
-            self.cbb[1]['textvariable']=self.valueKH[self.Dem][3]
-            self.cbb[2]['textvariable']=self.valueKH[self.Dem][4]
-            
-    def trangTruoc(self):
-        if self.Dem>0:
-            self.Dem-=1
-            self.title['text']=self.veDaChon[self.Dem][0]
-            self.entry[0]['textvariable']=self.valueKH[self.Dem][0]
-            self.entry[1]['textvariable']=self.valueKH[self.Dem][1]
-            self.cbb[0]['textvariable']=self.valueKH[self.Dem][2]
-            self.cbb[1]['textvariable']=self.valueKH[self.Dem][3]
-            self.cbb[2]['textvariable']=self.valueKH[self.Dem][4]
-
-    def datTruoc(self):
-        self.loadTrang2()
-        self.labelPhan2 = []
-        self.btnPhan2 = []
-        self.demPhan2=0
-        demRow=1
-        self.title["text"]= "Danh Sach khach hang dat truoc:"
-        for i in self.valueKH:
-            trangThai = True
-            for j in range(2):
-                if(i[j].get()==""):
-                    trangThai=False
-                    break
-            for j in range(3):
-                if(i[j+2].get()==0):
-                    trangThai=False
-                    break
-            print(trangThai)
-            if(trangThai):
-                chuoi = "Khach hang thu " + str(self.demPhan2+1)
-                tam=Label(self.master,text=chuoi)
-                tam.grid(column=0,row=demRow)
-                self.labelPhan2.append(tam)
-                demRow+=1
-                # dem +=1
-                tam=Label(self.master,text="Tên khách hàng")
-                tam.grid(column=0,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text=i[0].get())
-                tam.grid(column=1,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text="CMND")
-                tam.grid(column=2,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text=i[1].get())
-                tam.grid(column=3,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text="Ngay sinh")
-                tam.grid(column=4,row=demRow)
-                self.labelPhan2.append(tam)
-                ngaySinh = str(i[4].get())+"-"+str(i[3].get())+"-"+str(i[2].get())
-                tam=Label(self.master,text=ngaySinh)
-                tam.grid(column=5,row=demRow)
-                self.labelPhan2.append(tam)
-                demRow+=1
-                tam=Label(self.master,text="Ve")
-                tam.grid(column=0,row=demRow)
-                self.labelPhan2.append(tam)
-                try:
-                    tam=Label(self.master,text=self.veDaChon[dem][0])
-                    tam.grid(column=1,row=demRow)
-                except:
-                    tam=Label(self.master,text=self.veDaChon[0])
-                    tam.grid(column=1,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text="Toa")
-                tam.grid(column=2,row=demRow)
-                self.labelPhan2.append(tam)
-                try:
-                    tam=Label(self.master,text=self.veDaChon[self.demPhan2][2])
-                    tam.grid(column=3,row=demRow)
-                except:
-                    tam=Label(self.master,text=self.veDaChon[2])
-                    tam.grid(column=3,row=demRow)
-                self.labelPhan2.append(tam)
-                tam=Label(self.master,text="Gia")
-                tam.grid(column=4,row=demRow)
-                self.labelPhan2.append(tam)
-                try:
-                    tam=Label(self.master,text=self.veDaChon[self.demPhan2][4])
-                    tam.grid(column=5,row=demRow)
-                except:
-                    tam=Label(self.master,text=self.veDaChon[4])
-                    tam.grid(column=5,row=demRow)
-                self.labelPhan2.append(tam)
-                self.demPhan2+=1
-                demRow+=1
-        tam=Button(self.master,text="Xác Nhận",command=self.xacNhan)
-        tam.grid(column=5,row=demRow)
-        self.btnPhan2.append(tam)
-        tam=Button(self.master,text="Quay lại")
-        tam.grid(column=0,row =demRow)
-        self.btnPhan2.append(tam)
-
-    def thanhToan(self):
-        pass
-
-    def loadTrang2(self):
-        for i in self.labelGT:
-            i.grid_forget()
-        for i in  self.entry:
-            i.grid_forget()
-        for i in self.cbb:
-            i.grid_forget()
-        for i in self.btn:
-            i.grid_forget()
-
-    def xacNhan(self):
-        for i in self.labelPhan2:
-            i.grid_forget()
-        for i in self.btnPhan2:
-            i.grid_forget()
-        self.title.grid_forget()
-        Label(self.master,text="Thong tin ve")
-        
-
-    def quayLai(self):
-        pass
+class ThongBaoDatTruoc():
+    pass
 App(Tk())

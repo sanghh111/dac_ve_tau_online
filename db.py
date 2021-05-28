@@ -103,9 +103,67 @@ Where maCD="{maCd}"'''.format(maCd=maCD)
     except:
         result = None
     return result
+
+def Select_Ve_maVe(cur,maVe):
+    cau_truy_van = '''Select 
+A.maVe,
+B.maCD,
+(Select tenGa
+From "Ga Tau"
+Where B.maGaXuatPhat = maGa) as "Ga xuat phat",
+(Select tenGa
+From "Ga Tau"
+Where B.maGaNoiDen = maGa) as "Ga den",
+B.ngayKhoiHanh,
+A.maCho,
+A.maToa,
+A.maTau,
+A.Gia
+From Ve as A 
+inner join "ChuyenDi" as B
+on A.maCD = B.maCD
+Where  maVe = "{mave}"'''.format(mave=maVe)
+    try:
+        result = cur.execute(cau_truy_van).fetchone()
+    except:
+        result = None
+    return result
+
+def lay_maKH(cur):
+    cau_truy_van  = '''Select dem
+From  "Khach hang"
+Where dem =  (Select max(dem)
+From "Khach hang")'''
+    try:
+        result = cur.execute(cau_truy_van).fetchone()
+    except:
+        result = None
+    return result
+
+def Insert_KH(cur,con,tenKH,cmnd,ngaySinh):
+    dem = lay_maKH(cur)
+    if dem:
+        dem=dem[0]+1
+    else:
+        dem=1
+    makh = "KH-"+str(dem)
+    cau_truy_van = '''Insert into "Khach hang"
+values("{ma}","{ten}","{CMND}","{ngay}",{so})'''.format(ma=makh,ten=tenKH,CMND=cmnd,ngay=ngaySinh,so=dem)
+    print(cau_truy_van)
+    try:
+        result=cur.execute(cau_truy_van)
+    except:
+        result=None
+    if result:
+        con.commit()
+        return makh
+    else:
+        print("That bai")
+        return None
 # con,cur = connect_DB('dac_ve_tau.db')
-# a=Select_Ve(cur,'SG-HN')
+# a=Select_Ve_maVe(cur,"SG-HN01-2")
 # print(a)
+# Insert_KH(cur,con,"Loc","1231313","2000-04-08")
 # Insert_Ve(cur,con,'SG-HN01','NCDH','K6C',500000,42,168)
 # insert_ghe(con,cur,"K4C")
 # a=select_toa_tau(cur)
