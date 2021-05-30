@@ -1,6 +1,6 @@
 from re import A, L
 from tkinter import * 
-from tkinter import ttk
+from tkinter import ttk,messagebox
 from datetime import datetime
 from typing import List, NewType
 from db import *
@@ -361,7 +361,7 @@ class App(Frame):
                 for j in range(4):
                     dem = i*4+j+1
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem,ten='Ngồi mềm điều hòa')
                     a.place(x=75+i*29,y=230+j*20)
                     if(self.thongTinVe[dem-1][3]=="Trống"):
                         try:
@@ -397,7 +397,7 @@ class App(Frame):
                     dem = i*4+j+1
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
                     a.place(x=53+i*25,y=230+j*20)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem+64)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem,ten='Ngồi cứng điều hòa')
                     if(self.thongTinVe[dem-1+64][3]=="Trống"):
                         try:
                             self.button_ve[dem-1+64]=a
@@ -432,7 +432,7 @@ class App(Frame):
                     dem = i*2+j+1
                     print(dem)
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=144+dem)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem,ten='Toa 4 chiều')
                     a.place(x=63+i*35,y=230+j*40)
                     if(self.thongTinVe[dem-1+144][3]=="Trống"):
                         try:
@@ -463,7 +463,7 @@ class App(Frame):
                 for j in range(3):
                     dem = i*3+j+1
                     a=Button(self.can,text=dem,bg='blue',highlightthickness=0,width=2)
-                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=172+dem)
+                    a['command']= self.callBackOnClickChoNgoi(btn=a,dem=dem,ten='Toa 6 chiều')
                     a.place(x=63+i*35,y=230+j*40)
                     if(self.thongTinVe[dem-1+172][3]=="Trống"):
                         try:
@@ -523,16 +523,24 @@ class App(Frame):
 
     def onClickChoNgoi(self, kw):
         self.taoViewDSC()
-        if(kw['dem'] not in self.DSC):
-            print("chua co")
-            self.DSC.append(kw['dem'])
-            self.ViewDSC.themGhe(kw['dem'],self.thongTinVe[kw['dem']-1][4])
-            self.button_ve[kw['dem']-1]['bg']='RosyBrown3'
+        if kw['ten']=='Ngồi mềm điều hòa':
+            heso=0
+        elif kw['ten']=='Ngồi cứng điều hòa':
+            heso=64
+        elif kw['ten'] == 'Toa 4 chiều':
+            heso=64+80
+        elif kw['ten'] == 'Toa 6 chiều':
+            heso=80+64+24
+        if((kw['dem'],kw['ten']) in self.DSC):
+            print("Co ghe: ",self.DSC.index((kw['dem'],kw['ten'])))
+            self.ViewDSC.xoaGhe(self.DSC.index((kw['dem'],kw['ten'])))
+            self.DSC.remove((kw['dem'],kw['ten']))
+            self.button_ve[kw['dem']+heso-1]['bg']='blue'
         else:
-            print("Co so: ",self.DSC.index(kw['dem']))
-            self.ViewDSC.xoaGhe(self.DSC.index(kw['dem']))
-            self.DSC.remove(kw['dem'])
-            self.button_ve[kw['dem']-1]['bg']='blue'
+            print("chua co")
+            self.DSC.append((kw['dem'],kw['ten']))
+            self.ViewDSC.themGhe(kw['dem'],kw['ten'],self.thongTinVe[kw['dem']-1][4])
+            self.button_ve[kw['dem']-1+heso]['bg']='RosyBrown3'
 
     def nhanTinHieu(self,**kw):
         return kw['object']
@@ -542,6 +550,7 @@ class App(Frame):
 
     def taoViewDSC(self):
         try:
+            
             self.ViewDSC
         except:
             self.ViewDSC=None
@@ -549,59 +558,83 @@ class App(Frame):
             self.ViewDSC=DanhSachVe(Toplevel(),object=self)
             self.DSC = []
 
+    def getDSC(self):
+        return self.DSC
+
 class DanhSachVe(Frame):
     def __init__(self,master,**kw):
         self.master = master
+        self.kw=kw['object']
         self.guiTinHieu(kw)
         self.lbGhe = []
         self.display()
 
     def display(self):
-        Label(self.master,text='DANH SÁCH VÉ CHỌN').grid(column=0,columnspan=3,row=0)
+        Label(self.master,text='DANH SÁCH VÉ CHỌN').grid(column=0,columnspan=4,row=0)
         Label(self.master,text="Số ghế",bg="blue",width=10).grid(column=0,row=1,sticky=W)
-        Label(self.master,text="Giá",bg="red",width=20).grid(column=1,row=1,sticky=W)
-        self.btnDT = Button(self.master,text="Đặt trước")
-        self.btnTT = Button(self.master,text="Thanh toán")
+        Label(self.master,text="Tên toa",bg="LightSteelBlue2",width=20).grid(column=1,row=1,sticky=W)
+        Label(self.master,text="Giá",bg="red",width=20).grid(column=2,row=1,sticky=W)
+        
+        self.btnDV = Button(self.master,text="Đặt trước",command=self.datVe)
         self.demRow=2
         self.master.mainloop
 
     def guiTinHieu(self,kw):
         kw['object'].nhanTinHieu(object=self)
 
-    def themGhe(self,soGhe,gia):
+    def themGhe(self,soGhe,tenToa,gia):
         tam1=Label(self.master,text=soGhe)
         tam1.grid(column=0,row=self.demRow)
-        tam2=Label(self.master,text=gia)
+        tam2=Label(self.master,text=tenToa)
         tam2.grid(column=1,row=self.demRow)
+        tam3=Label(self.master,text=gia)
+        tam3.grid(column=2,row=self.demRow)
         if(self.btnDT.grid_info() != {}):
-            self.btnDT.grid_forget()
-            self.btnTT.grid_forget()
-        self.btnDT.grid(column=0,row=self.demRow+1,sticky=W)
-        self.btnTT.grid(column=3,row=self.demRow+1,sticky=E)
+            self.btnTV.grid_forget()
+        self.btnDV.grid(column=3,row=self.demRow+1,sticky=W)
         self.demRow+=1
-        self.lbGhe.append((tam1,tam2))
+        self.lbGhe.append((tam1,tam2,tam3))
         pass
     
     def xoaGhe(self,viTri):
         a=self.lbGhe[viTri]
         a[0].grid_forget()
         a[1].grid_forget()
-        self.btnDT.grid_forget()
-        self.btnTT.grid_forget()
+        a[2].grid_forget()
+        self.btnDV.grid_forget()
         print("self.demRow=",self.demRow)
         for i in range(viTri,self.demRow-3):
             # print(i)
             self.lbGhe[i+1][0].grid_forget()
             self.lbGhe[i+1][1].grid_forget()
+            self.lbGhe[i+1][2].grid_forget()
             self.lbGhe[i+1][0].grid(column=0,row=i+2)
             self.lbGhe[i+1][1].grid(column=1,row=i+2)
-        self.btnDT.grid(column=0,row=self.demRow,sticky=W)
-        self.btnTT.grid(column=3,row=self.demRow,sticky=E)
+            self.lbGhe[i+1][2].grid(column=2,row=i+2)
+        self.btnDV.grid(column=0,row=self.demRow,sticky=W)
         self.demRow-=1
         self.lbGhe.remove(a)
 
+    def thanhToan(self):
+        pass
+
+    def datVe(self):
+        a=messagebox.askquestion("Đặt vé tàu","Bạn có muốn đặt vé tàu không?")
+        # print(a)
+        if a == 'yes':
+            DSC=self.kw.getDSC()
+            del(self.kw.ViewDSC)
+            del(self.kw.DSC)
+            self.master.destroy()
+            self.kw.loadLaiHienThiTau()
+        if a == 'no' :
+            pass
+
     def __del__(self):
-        return None
+        pass
+        # print("del")
+        # del(self.kw.ViewDSC)
+        # del(self.kw.DCS)
 
 
 class ThongBaoDatTruoc():
