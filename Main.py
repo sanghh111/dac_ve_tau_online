@@ -2,11 +2,11 @@ from KhachHang import KhachHang
 from re import A, L
 from tkinter import *
 from tkinter import ttk, messagebox
-from datetime import datetime
+from datetime import datetime,date
 from typing import List, NewType
 from db import *
 from tkinter.constants import DISABLED, NORMAL
-import Ve
+from Ve import Ve
 # import threading
 
 
@@ -162,7 +162,7 @@ class App(Frame):
         ngayThangNam = str(self.nam.get())+"-" + \
             str(self.thang.get())+"-"+str(self.ngay.get())
         self.ket_qua = select_CD(
-            self.cur, "2021-5-12", self.tenGa[self.cbb_dv[0].current()][0], self.tenGa[self.cbb_dv[1].current()][0])
+            self.cur, "2021-06-13", self.tenGa[self.cbb_dv[0].current()][0], self.tenGa[self.cbb_dv[1].current()][0])
         if(self.ket_qua):
             self.ket_qua = self.ket_qua.fetchall()
         self.label_stt = []
@@ -619,8 +619,8 @@ class App(Frame):
             self.ViewDSC = DanhSachVe(Toplevel(), object=self)
             self.DSC = []
 
-    def getDSC(self):
-        DSC = []
+    def setMVDSC(self):
+        self.maVeDSC = []
         for i in self.DSC:
             heSo = int()
             if i[1] == 'Ngồi mềm điều hòa':
@@ -631,11 +631,12 @@ class App(Frame):
                 heSo = 64+80
             elif i[1] == 'Toa 6 chiều':
                 heSo = 80+64+24
-            DSC.append(self.thongTinVe[heSo+i[0]])
+            self.maVeDSC.append(self.thongTinVe[heSo+i[0]-1][0])
 
-    def setdsKH(self,kh):
-        self.kh=kh
-        # print('self.kh: ', self.kh)
+    def thanhToanDV(self, kh):
+        # self.maVeDSC()
+        UIThanhToan(Toplevel(), kh=kh, object=self,
+                    trangThai=True, dsMaVe=self.maVeDSC)
 
 
 class DanhSachVe(Frame):
@@ -696,19 +697,16 @@ class DanhSachVe(Frame):
         self.demRow -= 1
         self.lbGhe.remove(a)
 
-    def thanhToan(self):
-        pass
-
     def datVe(self):
         a = messagebox.askquestion(
             "Đặt vé tàu", "Bạn có muốn đặt vé tàu không?")
         # print(a)
         if a == 'yes':
-            DSC = self.kw.getDSC()
+            DSC = self.kw.setMVDSC()
             del(self.kw.ViewDSC)
             del(self.kw.DSC)
             self.kw.loadLaiHienThiTau()
-            UIThongTinKH(Toplevel(),object =self.kw)
+            UIThongTinKH(Toplevel(), object=self.kw)
             self.master.destroy()
         if a == 'no':
             pass
@@ -741,7 +739,7 @@ class UIThongTinKH(Frame):
 
     def display(self):
         Label(self.master, text="NHẬP THÔNG TIN KHÁCH HÀNG").grid(
-            column=0, columnspan=3, row=0)
+            column=0, columnspan=4, row=0)
         ten = Label(self.master, text="Tên")
         tuoi = Label(self.master, text="Tuổi")
         cmnd = Label(self.master, text="CMND")
@@ -770,7 +768,7 @@ class UIThongTinKH(Frame):
 
     def onClick(self):
         for i in self.value:
-            if i.get() == '' or i.get()==0:
+            if i.get() == '' or i.get() == 0:
                 self.trangThai.grid(column=0, columnspan=3, row=4, sticky=E)
                 return
         self.kh.setTenKH(self.value[0].get())
@@ -779,7 +777,98 @@ class UIThongTinKH(Frame):
                             self.value[3].get(),
                             self.value[4].get())
         self.master.destroy()
+        self.kw.thanhToanDV(self.kh)
+
     def __del__(self):
-        self.kw.setdsKH(self.kh)
+        # self.kw.setdsKH(self.kh)
+        pass
+
+
+class UIThanhToan(Frame):
+    def __init__(self, master, **kw):
+        # super.__init__()
+        if 'object' in kw:
+            self.object = kw['object']
+        if 'trangThai' in kw:
+            self.trangThai = kw['trangThai']
+        if 'kh' in kw:
+            self.kh = kw['kh']
+        if 'dsMaVe' in kw:
+            self.dsMaVe = kw['dsMaVe']
+        print('self.kh: ', self.kh)
+        # print('self.dsMaVe: ', self.dsMaVe)
+        self.ve = []
+        for i in self.dsMaVe:
+            self.ve.append(Ve(i))
+        self.master = master
+        self.display()
+
+    def display(self):
+        Label(self.master, text="Thanh Toán vé tàu", font=15).grid(
+            column=0, columnspan=4, row=0)
+        Label(self.master, text="Chuyến đi").grid(
+            column=0, columnspan=3, row=1)
+        Label(self.master, text=self.ve[0].getMaCD()).grid(
+            column=1, columnspan=3, row=1)
+        Label(self.master, text="Ga xuất phát").grid(column=0, row=2, sticky=E)
+        Label(self.master, text=self.ve[0].getGaDi()).grid(
+            column=1, row=2, sticky=W)
+        Label(self.master, text="Ga đến").grid(column=2, row=2, sticky=E)
+        Label(self.master, text=self.ve[0].getGaDen()).grid(
+            column=3, row=2, sticky=E)
+        Label(self.master, text="Thời gian").grid(
+            column=0, columnspan=3, row=3)
+        Label(self.master, text=self.ve[0].getNgayKhoiHanh()).grid(
+            column=1, row=3, columnspan=3)
+        Label(self.master, text="Số ghế", width=5).grid(
+            column=0, row=4)
+        Label(self.master, text="Tên toa", width=20).grid(
+            column=1, row=4)
+        Label(self.master, text="Giá", width=10).grid(column=2, row=4)
+        self.drow = 5
+        tongGiaVe=0
+        for i in self.ve:
+            Label(self.master, text=i.getSoGhe(), width=10).grid(
+                column=0, row=self.drow)
+            Label(self.master, text=i.getTenToa(), width=20).grid(
+                column=1, row=self.drow)
+            Label(self.master, text=i.getGia(), width=10).grid(
+                column=2, row=self.drow)
+            tongGiaVe +=i.getGia()
+            self.drow += 1
+        Label(self.master, text="Tổng tiền:").grid(
+            column=1,row=self.drow,sticky=E)
+        Label(self.master, text=tongGiaVe).grid(
+            column=2,row=self.drow,stick=W)
+        Button(self.master,text="Thanh toán sau",command=self.thanhToanSau).grid(column=0,row=self.drow+1,stick=W)
+        Button(self.master,text="Thanh toán",command=self.thanhToan).grid(column=3,row=self.drow+1,stick=E)
+        self.master.mainloop
+
+    def thanhToanSau(self):
+        request = messagebox.askquestion("THANH TOÁN SAU","Ban đồng ý thanh toán sau không?")
+        if request:
+            Label(self.master,text="THANH TOÁN ĐẶT SAU").grid(column=0,columnspan=4,row=self.drow+2)
+            self.gioiHan=self.ve[0].chuyenDate()
+            self.soNgay=IntVar()
+            loi_canh_bao = "Ban chỉ có thể thanh toán sau tối đa {ngay} ngày".format(ngay=self.gioiHan)
+            Label(self.master,text=loi_canh_bao).grid(column=1,columnspan=3,row=self.drow+3)
+            Spinbox(self.master,from_=1,to=self.gioiHan,textvariable=self.soNgay).grid(column=1,columnspan=2,row=self.drow+4)
+            Button(self.master,text="Chấp nhận",command=self.chapNhanTTS).grid(column=3,row=self.drow+5,sticky=E)
+
+
+    def thanhToan(self):
+        request = messagebox.askquestion("THANH TOÁN VÉ","Ban đồng ý thanh toán vé không?")
+        if request:
+            for i in self.ve:
+                i.themKH(self.kh)
+            del(self.object.maVeDSC)
+            self.master.destroy()
+    
+    def chapNhanTTS(self):
+        if self.soNgay.get() <= 0 and self.soNgay.get() >=self.gioiHan:
+            Label(self.master,text="Chọn lại số ngày").grid(column=0,columnspan=3,row=self.drow+5)
+        else:
+            for i in  self.ve:
+                i.thanhToanSau(self.soNgay.get(),self.kh)
 
 App(Tk())

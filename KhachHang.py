@@ -1,5 +1,6 @@
 from db import *
-
+# import re
+# import Ve
 class KhachHang():
 
     def __init__(self):
@@ -31,3 +32,18 @@ CMND: {cmnd}
 Ngày sinh: {ngaySinh}'''.format(ten=self.tenKH,
                                 cmnd=self.cmnd,
                                 ngaySinh=self.ngaySinh)
+
+    def timMaKH(self):
+        maKH = Select_maKH_cmnd(cur,self.cmnd)
+        if maKH :
+            self.maKH =maKH
+            return maKH
+        else: 
+            maKH=Insert_KH(cur,con,self.tenKH,self.cmnd,self.ngaySinh)
+            if maKH:
+                return maKH
+            else :
+                return None
+
+    
+# Ve("SG-HN01-200")

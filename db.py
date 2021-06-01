@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 
 
 def connect_DB(dbfile):
@@ -116,7 +117,6 @@ Where maCD="{maCd}"'''.format(maCd=maCD)
 
 def Select_Ve_maVe(cur, maVe):
     cau_truy_van = '''Select 
-A.maVe,
 B.maCD,
 (Select tenGa
 From "Ga Tau"
@@ -127,7 +127,11 @@ Where B.maGaNoiDen = maGa) as "Ga den",
 B.ngayKhoiHanh,
 A.maCho,
 A.maToa,
+(SELECT tenToa
+From Toa
+Where A.maToa=maToa)as "ten Toa",
 A.maTau,
+A.trangThai,
 A.Gia
 From Ve as A 
 inner join "ChuyenDi" as B
@@ -172,10 +176,60 @@ values("{ma}","{ten}","{CMND}","{ngay}",{so})'''.format(ma=makh, ten=tenKH, CMND
     else:
         print("That bai")
         return None
-# con,cur = connect_DB('dac_ve_tau.db')
+
+
+def Select_maKH_cmnd(cur, cmnd):
+    cau_truy_van = '''Select maKH
+from "Khach hang"
+Where Cmnd = '{Cmnd}';'''.format(Cmnd=cmnd)
+    try:
+        result = cur.execute(cau_truy_van).fetchone()
+    except:
+        result = None
+    # if result == None and result == "":
+    if result:
+        return result[0]
+
+
+def Insert_NKTT(con, cur, maVe, maKH):
+    day = str(date.today())
+    cau_truy_van = '''Insert into "Nhat Ky Thanh Toan"
+Values("{ma_ve}","{ma_kh}","{Day}")'''.format(
+        ma_ve=maVe, ma_kh=maKH, Day=day)
+    try:
+        result = cur.execute(cau_truy_van)
+    except:
+        result = None
+    if result:
+        con.commit()
+        return True
+    else:
+        return False
+
+
+def insert_NKDC(con, cur, maKH, maVe, ngayDat, ngayHetHan):
+    maDC = maKH + "-" + maVe
+    cau_truy_van = '''Insert into "Nhat ky dat cho"
+Values("{ma_dc}","{ma_kh}","{ma_ve}","{ngay_dat}","{ngay_het_han}")'''.format(
+        ma_dc=maDC, ma_kh=maKH, ma_ve=maVe, ngay_dat=ngayDat, ngay_het_han=ngayHetHan
+    )
+    try:
+        result =  cur.execute(cau_truy_van)
+    except: 
+        result = None
+    if result:
+        con.commit()
+    else:
+        return False
+
+con, cur = connect_DB('dac_ve_tau.db')
+
+# a=Select_maKH_cmnd(cur,"122")
+# print('a: ', a)
+
 # a=Select_Ve_maVe(cur,"SG-HN01-2")
 # print(a)
-# Insert_KH(cur,con,"Loc","1231313","2000-04-08")
+# Insert_KH(cur,con,"Loc","123","2000-04-08")
 # Insert_Ve(cur,con,'SG-HN01','NCDH','K6C',500000,42,168)
 # insert_ghe(con,cur,"K4C")
 # a=select_toa_tau(cur)
