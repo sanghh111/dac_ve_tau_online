@@ -12,8 +12,9 @@ class KhachHang():
     def setTenKH(self, tenKH):
         self.tenKH = tenKH
 
-    def setmaKH(self):
-        pass
+    def setmaKH(self,maKH):
+        self.maKH = maKH
+        self.setTTDB()
 
     def themDB(self):
         pass
@@ -45,5 +46,9 @@ Ngày sinh: {ngaySinh}'''.format(ten=self.tenKH,
             else :
                 return None
 
-    
+    def setTTDB(self):
+        kh=select_kh_maKh(cur,self.maKH)
+        self.tenKH = kh[0]
+        self.maKH = kh[1]
+        self.ngaySinh = kh[2]
 # Ve("SG-HN01-200")

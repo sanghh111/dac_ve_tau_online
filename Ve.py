@@ -92,7 +92,7 @@ class Ve():
         self.kh= kh
         makh= kh.timMaKH()
         trangThai = insert_NKDC(con,cur,makh,self.maVe,today,hetHan)
-        print('trangThai: ', trangThai)
+        print('insert_NKDC: ', trangThai)
 
 # a=Ve("SG-HN01-200")
 # a.thanhToanSau(32)

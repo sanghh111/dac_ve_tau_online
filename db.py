@@ -18,10 +18,8 @@ WHERE A.maGaNoiDen = maGa) as "Ga Noi Den "
 ,ngayKhoiHanh
 From ChuyenDi as A
 Where ngayKhoiHanh in ("{Ngay}")'''.format(Ngay=ngay)
-    if(ga_di != 'Chọn'):
-        cau_truy_van += '\nAnd maGaXuatPhat = "{Ga_di}"'.format(Ga_di=ga_di)
-    if(ga_den != "Chọn"):
-        cau_truy_van += '\nAnd maGaNoiDen = "{Ga_den}"'.format(Ga_den=ga_den)
+    cau_truy_van += '\nAnd maGaXuatPhat = "{Ga_di}"'.format(Ga_di=ga_di)    
+    cau_truy_van += '\nAnd maGaNoiDen = "{Ga_den}"'.format(Ga_den=ga_den)
     # print(cau_truy_van)
     try:
         result = cur.execute(cau_truy_van)
@@ -196,6 +194,7 @@ def Insert_NKTT(con, cur, maVe, maKH):
     cau_truy_van = '''Insert into "Nhat Ky Thanh Toan"
 Values("{ma_ve}","{ma_kh}","{Day}")'''.format(
         ma_ve=maVe, ma_kh=maKH, Day=day)
+    print('cau_truy_van: ', cau_truy_van)
     try:
         result = cur.execute(cau_truy_van)
     except:
@@ -209,10 +208,11 @@ Values("{ma_ve}","{ma_kh}","{Day}")'''.format(
 
 def insert_NKDC(con, cur, maKH, maVe, ngayDat, ngayHetHan):
     maDC = maKH + "-" + maVe
-    cau_truy_van = '''Insert into "Nhat ky dat cho"
+    cau_truy_van = '''Insert into "Nhat ky dat cho"(maDC,maKH,maVe,ngayDat,ngayHetHan)
 Values("{ma_dc}","{ma_kh}","{ma_ve}","{ngay_dat}","{ngay_het_han}")'''.format(
         ma_dc=maDC, ma_kh=maKH, ma_ve=maVe, ngay_dat=ngayDat, ngay_het_han=ngayHetHan
     )
+    print('cau_truy_van: ', cau_truy_van)
     try:
         result =  cur.execute(cau_truy_van)
     except: 
@@ -222,8 +222,31 @@ Values("{ma_dc}","{ma_kh}","{ma_ve}","{ngay_dat}","{ngay_het_han}")'''.format(
     else:
         return False
 
-con, cur = connect_DB('dac_ve_tau.db')
+def select_NKDV_maVe(cur,madc):
+    cau_truy_van = '''Select maKH,maVe,ngayHetHan
+from "Nhat ky dat cho"
+where maDC="{maDC}"'''.format(maDC=madc)
+    try:
+        result = cur.execute(cau_truy_van).fetchall()
+    except:
+        result = None
+    if result:
+        return result[0]
 
+def select_kh_maKh(cur,maKH):
+    cau_truy_van = '''Select tenKh,Cmnd,ngaySinh
+from "Khach hang"
+Where maKH = "{ma}"'''.format(ma=maKH)
+    try:
+        result = cur.execute(cau_truy_van).fetchone()
+    except:
+        result = None
+    if result:
+        return result
+
+con, cur = connect_DB('dac_ve_tau.db')
+# a= select_NKDV_maVe(cur,"KH-4-SG-HN01-58")
+# print(a)
 # a=Select_maKH_cmnd(cur,"122")
 # print('a: ', a)
 

@@ -1,8 +1,9 @@
+from VeDat import VeDat
 from KhachHang import KhachHang
-from re import A, L
+from re import A, L, T
 from tkinter import *
 from tkinter import ttk, messagebox
-from datetime import datetime,date
+from datetime import datetime, date
 from typing import List, NewType
 from db import *
 from tkinter.constants import DISABLED, NORMAL
@@ -60,7 +61,7 @@ class App(Frame):
         self.master.mainloop()
 
     def dacVeTau(self):
-        if(self.trangThai[0] == None):
+        if(self.trangThai[0] == None and self.trangThai[2] == None):
             self.kiemTraTrangThai(0)
             self.tenGa = select_Ga(self.cur).fetchall()
             tenGa = []
@@ -111,6 +112,7 @@ class App(Frame):
             self.line_dv[0] = self.can.create_line(-10, 180, 250, 180)
             self.line_dv[1] = self.can.create_line(250, -3, 250, 180)
         elif(self.trangThai[0] == 0):
+            self.title_dv['text']="Đặt vé tàu"
             self.kiemTraTrangThai(0)
             self.trangThai[0] = 1
             self.hienThiDacVeTau()
@@ -121,12 +123,14 @@ class App(Frame):
         if(self.trangThai[1] == None):
             self.kiemTraTrangThai(1)
             self.trangThai[1] = 1
+            self.maVe = StringVar()
             self.title_tt = Label(
                 self.can, text="Thanh toan ve tau", background='MediumPurple1')
             self.label_tt = Label(
                 self.can, text="Ma dat truoc", background='MediumPurple1')
-            self.entry_tt = Entry(self.can)
-            self.button_tt = Button(self.can, text="Tim kiem")
+            self.entry_tt = Entry(self.can, textvariable=self.maVe)
+            self.button_tt = Button(
+                self.can, text="Tim kiem", command=self.timKiemVeDatTruoc)
             self.title_tt.place(relx=0.125, rely=0.065)
             self.label_tt.place(relx=0.05, rely=0.2)
             self.entry_tt.place(relx=0.175, rely=0.2)
@@ -138,31 +142,127 @@ class App(Frame):
         else:
             pass
 
-    def timKiem(self):
-        if(self.trangThai[2] == None):
-            self.kiemTraTrangThai(2)
-            self.trangThai[2] = 1
-            self.title_tk = Label(
-                self.can, text="Tim kiem ve tau", background='MediumPurple1')
-            self.label_tk = Label(self.can, text="Ma ve tau",
-                                  background='MediumPurple1')
-            self.entry_tk = Entry(self.can)
-            self.button_tk = Button(self.can, text="Tim kiem")
-            self.title_tk.place(relx=0.125, rely=0.065)
-            self.label_tk.place(relx=0.05, rely=0.2)
-            self.entry_tk.place(relx=0.175, rely=0.2)
-            self.button_tk.place(relx=0.3, rely=0.4)
-        elif(self.trangThai[2] == 0):
-            self.kiemTraTrangThai(2)
-            self.trangThai[2] = 1
+    def timKiemVeDatTruoc(self):
+        self.veDat = VeDat(self.maVe.get())
+        if self.veDat.isNull():
+            return
         else:
-            pass
+            try:
+                self.labelTT
+            except:
+                self.labelTT = []
+            Ve = Select_Ve_maVe(cur, self.veDat.get_maVe())
+            print(Ve)
+            if self.labelTT == []:
+                self.labelTT.append(Label(self.can, text="THÔNG TIN VÉ"))
+                self.labelTT.append(Label(self.can, text="Mã chuyến đi"))
+                self.labelTT.append(Label(self.can, text="Ga xuất phát"))
+                self.labelTT.append(Label(self.can, text="Ga đến"))
+                self.labelTT.append(Label(self.can, text="Ngày đi"))
+                self.btnTT = Button(self.can, text="Thanh toán",
+                                    command=self.thanhToanVeDat)
+                self.labelTT.append(Label(self.can, text=Ve[0]))
+                self.labelTT.append(Label(self.can, text=Ve[1]))
+                self.labelTT.append(Label(self.can, text=Ve[2]))
+                self.labelTT.append(Label(self.can, text=Ve[3]))
+                self.labelTT[0].place(relx=0.65, rely=0.1)
+                self.labelTT[1].place(relx=0.55, rely=0.175)
+                self.labelTT[2].place(relx=0.5, rely=0.25)
+                self.labelTT[3].place(relx=0.8, rely=0.25)
+                self.labelTT[4].place(relx=0.60, rely=0.325)
+                self.labelTT[5].place(relx=0.7, rely=0.175)
+                self.labelTT[6].place(relx=0.63, rely=0.25)
+                self.labelTT[7].place(relx=0.88, rely=0.25)
+                self.labelTT[8].place(relx=0.7, rely=0.325)
+                self.btnTT.place(relx=0.85, rely=0.4)
+            else:
+                self.labelTT[0].place(relx=0.65, rely=0.1)
+                self.labelTT[1].place(relx=0.55, rely=0.175)
+                self.labelTT[2].place(relx=0.5, rely=0.25)
+                self.labelTT[3].place(relx=0.8, rely=0.25)
+                self.labelTT[4].place(relx=0.60, rely=0.325)
+                self.labelTT[5].place(relx=0.7, rely=0.175)
+                self.labelTT[6].place(relx=0.63, rely=0.25)
+                self.labelTT[7].place(relx=0.88, rely=0.25)
+                self.labelTT[8].place(relx=0.7, rely=0.325)
+                self.btnTT.place(relx=0.85, rely=0.4)
+
+    def thanhToanVeDat(self):
+        kh = KhachHang()
+        kh.setmaKH(self.veDat.get_kh())
+        UIThanhToan(Toplevel(),dsMaVe=self.veDat.get_maVe(),kh=kh,object=self,trangThai=False)
+
+    def timKiem(self):
+        if(self.trangThai[2] == None and self.trangThai[0] == None):
+            self.kiemTraTrangThai(2)
+            self.tenGa = select_Ga(self.cur).fetchall()
+            tenGa = []
+            for i in self.tenGa:
+                tenGa.append(i[1])
+            self.tenGa.append(('Chọn', 'Chọn'))
+            tenGa.append('chọn')
+            self.giaTriGaDen.set('chọn')
+            self.giaTriGaDi.set('chọn')
+            self.trangThai[2] = 1
+            for a in range(0, 2):
+                self.label_dv.append([])
+                self.cbb_dv.append([])
+                self.button_dv.append([])
+                self.line_dv.append([])
+            for a in range(0, 3):
+                self.spinbox.append([])  # spinbox [0]:day, [1]:month, [2]:year
+            self.title_dv = Label(
+                self.can, text="Tìm kiếm vé tàu", background='MediumPurple1')
+            self.label_dv[0] = Label(
+                self.can, text="Ga den", background='MediumPurple1')
+            self.label_dv[1] = Label(
+                self.can, text="Ga di", background='MediumPurple1')
+            self.spinbox[0] = Spinbox(
+                self.can, from_=1, to_=31, width=2, textvariable=self.ngay)
+            self.spinbox[1] = Spinbox(self.can, from_=1, to_=12, width=2,
+                                      textvariable=self.thang, command=self.thietLapGioiHanNgay)
+            self.spinbox[2] = Spinbox(self.can, from_=2015, to_=2030, width=8,
+                                      textvariable=self.nam, command=self.thietLapGioiHanNgay)
+            self.button_dv[0] = Button(
+                self.can, text="Tim Kiem", command=self.timVe)
+            self.button_dv[1] = Button(
+                self.can, text="Quay lai", command=self.quayLai_dv)
+            self.cbb_dv[0] = ttk.Combobox(
+                self.can, width=17, textvariable=self.giaTriGaDen, values=tenGa)
+            self.cbb_dv[1] = ttk.Combobox(
+                self.can, width=17, textvariable=self.giaTriGaDi, values=tenGa)
+            self.label_dv[0].place(relx=0.1, rely=0.15)
+            self.label_dv[1].place(relx=0.1, rely=0.25)
+            self.cbb_dv[0].place(relx=0.2, rely=0.15)
+            self.cbb_dv[1].place(relx=0.2, rely=0.25)
+            self.spinbox[0].place(relx=0.2, rely=0.34)
+            self.spinbox[1].place(relx=0.25, rely=0.34)
+            self.spinbox[2].place(relx=0.3, rely=0.34)
+            self.button_dv[0].place(relx=0.3, rely=0.42)
+            self.button_dv[1].place(relx=0.2, rely=0.42)
+            self.title_dv.place(relx=0.175, rely=0.065)
+            self.line_dv[0] = self.can.create_line(-10, 180, 250, 180)
+            self.line_dv[1] = self.can.create_line(250, -3, 250, 180)
+        else:
+            self.title_dv['text']="Tìm kiếm vé tàu"
+            self.kiemTraTrangThai(2)
+            self.trangThai[2] = 1
+            self.hienThiDacVeTau()
 
     def timVe(self):
-        ngayThangNam = str(self.nam.get())+"-" + \
-            str(self.thang.get())+"-"+str(self.ngay.get())
+        self.xoaCanTV()
+        ngayThangNam = str(self.nam.get())+"-"
+        if(self.thang.get() < 10):
+            ngayThangNam += "0"+str(self.thang.get())
+        else:
+            ngayThangNam += str(self.thang.get())
+        ngayThangNam += "-"
+        if(self.ngay.get() < 10):
+            ngayThangNam += "0"+str(self.ngay.get())
+        else:
+            ngayThangNam += str(self.ngay.get())
         self.ket_qua = select_CD(
-            self.cur, "2021-06-13", self.tenGa[self.cbb_dv[0].current()][0], self.tenGa[self.cbb_dv[1].current()][0])
+            self.cur, ngayThangNam, self.tenGa[self.cbb_dv[0].current()][0], self.tenGa[self.cbb_dv[1].current()][0])
         if(self.ket_qua):
             self.ket_qua = self.ket_qua.fetchall()
         self.label_stt = []
@@ -210,6 +310,7 @@ class App(Frame):
             self.button_tv[5].place(x=540, y=45)
             self.can_tv.place(x=251, y=70)
         elif(self.title_tv.grid_info() == {}):
+            self.themDanhSachVe()
             self.title_tv.place(relx=0.6, rely=0.065)
             self.line_dv[2] = self.can.create_line(250, 180, 600, 180)
             self.line_dv[3] = self.can.create_line(250, 45, 600, 45)
@@ -220,6 +321,7 @@ class App(Frame):
             self.button_tv[3].place(x=410, y=45)
             self.button_tv[4].place(x=475, y=45)
             self.button_tv[5].place(x=540, y=45)
+            self.can_tv.place(x=251, y=70)
 
     def quayLai_dv(self):
         self.title_dv.place_forget()
@@ -241,28 +343,100 @@ class App(Frame):
                         i.place_forget()
                     for i in self.button_dv:
                         i.place_forget()
-                    for i in self.line_dv:
-                        self.can.delete(i)
-                    if(self.title_tv == None):
-                        pass
-                    elif(self.title_tv.place_info() != {}):
-                        self.title_tv.place_forget()
-                        for i in self.label_dv:
-                            i.place_forget()
-                        for i in self.button_tv:
-                            i.place_forget()
-                        self.can_tv.place_forget()
+                    for i in range(2):
+                        self.can.delete(self.line_dv[i])
+                    self.xoaCanTV()
+                    try:
+                        self.trangThaiToa
+                    except:
+                        self.trangThaiToa = False
+                    if(self.trangThaiToa):
+                        self.loadLaiHienThiTau()
+                    # elif(self.title_tv.place_info() != {}):
+                    #     self.title_tv.place_forget()
+                    #     for i in self.label_dv:
+                    #         i.place_forget()
+                    #     for i in self.button_tv:
+                    #         i.place_forget()
+                    #     self.can_tv.place_forget()
                 elif(i == 1):
                     self.title_tt.place_forget()
                     self.label_tt.place_forget()
                     self.entry_tt.place_forget()
                     self.button_tt.place_forget()
+                    try:
+                        self.veDat
+                    except:
+                        self.veDat = None
+                    if self.veDat != None:
+                        for i in self.labelTT:
+                            i.place_forget()
+                        self.btnTT.place_forget()
+                    try:
+                        del(self.veDat)
+                    except:
+                        print("Khong co ve dat")
                 elif(i == 2):
-                    self.title_tk.place_forget()
-                    self.label_tk.place_forget()
-                    self.entry_tk.place_forget()
-                    self.button_tk.place_forget()
+                    self.title_dv.place_forget()
+                    for i in self.label_dv:
+                        i.place_forget()
+                    for i in self.cbb_dv:
+                        i.place_forget()
+                    for i in self.spinbox:
+                        i.place_forget()
+                    for i in self.button_dv:
+                        i.place_forget()
+                    for i in range(2):
+                        self.can.delete(self.line_dv[i])
+                    self.xoaCanTV()
+                    try:
+                        self.trangThaiToa
+                    except:
+                        self.trangThaiToa = False
+                    if(self.trangThaiToa):
+                        self.loadLaiHienThiTau()
         return
+
+    def xoaCanTV(self):
+        try:
+            self.title_tv
+        except:
+            self.title_tv = None
+        if(self.title_tv):
+            if(self.title_tv.place_info() == {}):
+                print("khong co")
+                pass
+            else:
+                print("xoa")
+                self.title_tv.place_forget()
+                for i in range(2, len(self.line_dv)):
+                    self.can.delete(self.line_dv[i])
+                for i in self.button_tv:
+                    i.place_forget()
+                self.can_tv.place_forget()
+                if(self.ket_qua != []):
+                    for i in self.label_stt:
+                        i.place_forget()
+                    for i in self.label_maSo:
+                        i.place_forget()
+                    for i in self.label_gaDi:
+                        i.place_forget()
+                    for i in self.label_gaDen:
+                        i.place_forget()
+                    for i in self.label_ngayDi:
+                        i.place_forget()
+                    for i in self.radbu_timVe:
+                        i.place_forget()
+                    self.line_danhSachVe.clear()
+                    self.label_stt.clear()
+                    self.label_maSo.clear()
+                    self.label_gaDi.clear()
+                    self.label_gaDen.clear()
+                    self.label_ngayDi.clear()
+                    self.radbu_timVe.clear()
+                    self.giaTri_radbu.clear()
+                pass
+        pass
 
     def hienThiDacVeTau(self):
         self.label_dv[0].place(relx=0.1, rely=0.15)
@@ -378,6 +552,7 @@ class App(Frame):
             pass
 
     def hienThiToaTau(self):
+        self.trangThaiToa = True
         if(self.viTritoa == 0):
             self.btnToaBack = Button(
                 self.can, text="trang trước", highlightthickness=0, command=self.backToa)
@@ -408,6 +583,9 @@ class App(Frame):
                     a['command'] = self.callBackOnClickChoNgoi(
                         btn=a, dem=dem, ten='Ngồi mềm điều hòa')
                     a.place(x=75+i*29, y=230+j*20)
+                    print('self.trangThai[2]: ', self.trangThai[2])
+                    if(self.trangThai[2] == 1):
+                        a["state"] = DISABLED
                     if(self.thongTinVe[dem-1][3] == "Trống"):
                         try:
                             self.button_ve[dem-1] = a
@@ -798,8 +976,12 @@ class UIThanhToan(Frame):
         print('self.kh: ', self.kh)
         # print('self.dsMaVe: ', self.dsMaVe)
         self.ve = []
-        for i in self.dsMaVe:
-            self.ve.append(Ve(i))
+        
+        try:
+            for i in self.dsMaVe:
+                self.ve.append(Ve(i))
+        except:
+            self.ve.append(Ve(self.dsMaVe))
         self.master = master
         self.display()
 
@@ -826,7 +1008,7 @@ class UIThanhToan(Frame):
             column=1, row=4)
         Label(self.master, text="Giá", width=10).grid(column=2, row=4)
         self.drow = 5
-        tongGiaVe=0
+        tongGiaVe = 0
         for i in self.ve:
             Label(self.master, text=i.getSoGhe(), width=10).grid(
                 column=0, row=self.drow)
@@ -834,41 +1016,60 @@ class UIThanhToan(Frame):
                 column=1, row=self.drow)
             Label(self.master, text=i.getGia(), width=10).grid(
                 column=2, row=self.drow)
-            tongGiaVe +=i.getGia()
+            tongGiaVe += i.getGia()
             self.drow += 1
         Label(self.master, text="Tổng tiền:").grid(
-            column=1,row=self.drow,sticky=E)
+            column=1, row=self.drow, sticky=E)
         Label(self.master, text=tongGiaVe).grid(
-            column=2,row=self.drow,stick=W)
-        Button(self.master,text="Thanh toán sau",command=self.thanhToanSau).grid(column=0,row=self.drow+1,stick=W)
-        Button(self.master,text="Thanh toán",command=self.thanhToan).grid(column=3,row=self.drow+1,stick=E)
+            column=2, row=self.drow, stick=W)
+        if self.trangThai:
+            Button(self.master, text="Thanh toán sau", command=self.thanhToanSau).grid(
+                column=0, row=self.drow+1, stick=W)
+        Button(self.master, text="Thanh toán", command=self.thanhToan).grid(
+            column=3, row=self.drow+1, stick=E)
         self.master.mainloop
 
     def thanhToanSau(self):
-        request = messagebox.askquestion("THANH TOÁN SAU","Ban đồng ý thanh toán sau không?")
+        request = messagebox.askquestion(
+            "THANH TOÁN SAU", "Ban đồng ý thanh toán sau không?")
         if request:
-            Label(self.master,text="THANH TOÁN ĐẶT SAU").grid(column=0,columnspan=4,row=self.drow+2)
-            self.gioiHan=self.ve[0].chuyenDate()
-            self.soNgay=IntVar()
-            loi_canh_bao = "Ban chỉ có thể thanh toán sau tối đa {ngay} ngày".format(ngay=self.gioiHan)
-            Label(self.master,text=loi_canh_bao).grid(column=1,columnspan=3,row=self.drow+3)
-            Spinbox(self.master,from_=1,to=self.gioiHan,textvariable=self.soNgay).grid(column=1,columnspan=2,row=self.drow+4)
-            Button(self.master,text="Chấp nhận",command=self.chapNhanTTS).grid(column=3,row=self.drow+5,sticky=E)
-
+            Label(self.master, text="THANH TOÁN ĐẶT SAU").grid(
+                column=0, columnspan=4, row=self.drow+2)
+            self.gioiHan = self.ve[0].chuyenDate()
+            self.soNgay = IntVar()
+            loi_canh_bao = "Ban chỉ có thể thanh toán sau tối đa {ngay} ngày".format(
+                ngay=self.gioiHan)
+            Label(self.master, text=loi_canh_bao).grid(
+                column=1, columnspan=3, row=self.drow+3)
+            Spinbox(self.master, from_=1, to=self.gioiHan, textvariable=self.soNgay).grid(
+                column=1, columnspan=2, row=self.drow+4)
+            Button(self.master, text="Chấp nhận", command=self.chapNhanTTS).grid(
+                column=3, row=self.drow+5, sticky=E)
 
     def thanhToan(self):
-        request = messagebox.askquestion("THANH TOÁN VÉ","Ban đồng ý thanh toán vé không?")
+        request = messagebox.askquestion(
+            "THANH TOÁN VÉ", "Ban đồng ý thanh toán vé không?")
         if request:
             for i in self.ve:
                 i.themKH(self.kh)
-            del(self.object.maVeDSC)
+            try:
+                del(self.object.maVeDSC)
+            except:
+                pass
             self.master.destroy()
-    
+
     def chapNhanTTS(self):
-        if self.soNgay.get() <= 0 and self.soNgay.get() >=self.gioiHan:
-            Label(self.master,text="Chọn lại số ngày").grid(column=0,columnspan=3,row=self.drow+5)
+        if self.soNgay.get() <= 0 and self.soNgay.get() >= self.gioiHan:
+            Label(self.master, text="Chọn lại số ngày").grid(
+                column=0, columnspan=3, row=self.drow+5)
         else:
-            for i in  self.ve:
-                i.thanhToanSau(self.soNgay.get(),self.kh)
+            for i in self.ve:
+                i.thanhToanSau(self.soNgay.get(), self.kh)
+            try:
+                del(self.object.maVeDSC)
+            except:
+                pass
+            self.master.destroy()
+
 
 App(Tk())
