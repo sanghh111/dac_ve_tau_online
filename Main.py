@@ -62,55 +62,57 @@ class App(Frame):
 
     def dacVeTau(self):
         if(self.trangThai[0] == None and self.trangThai[2] == None):
-            self.kiemTraTrangThai(0)
-            self.tenGa = select_Ga(self.cur).fetchall()
-            tenGa = []
-            for i in self.tenGa:
-                tenGa.append(i[1])
-            self.tenGa.append(('Chọn', 'Chọn'))
-            tenGa.append('chọn')
-            self.giaTriGaDen.set('chọn')
-            self.giaTriGaDi.set('chọn')
-            self.trangThai[0] = 1
-            for a in range(0, 2):
-                self.label_dv.append([])
-                self.cbb_dv.append([])
-                self.button_dv.append([])
-                self.line_dv.append([])
-            for a in range(0, 3):
-                self.spinbox.append([])  # spinbox [0]:day, [1]:month, [2]:year
-            self.title_dv = Label(
-                self.can, text="Dat ve tau", background='MediumPurple1')
-            self.label_dv[0] = Label(
-                self.can, text="Ga den", background='MediumPurple1')
-            self.label_dv[1] = Label(
-                self.can, text="Ga di", background='MediumPurple1')
-            self.spinbox[0] = Spinbox(
-                self.can, from_=1, to_=31, width=2, textvariable=self.ngay)
-            self.spinbox[1] = Spinbox(self.can, from_=1, to_=12, width=2,
-                                      textvariable=self.thang, command=self.thietLapGioiHanNgay)
-            self.spinbox[2] = Spinbox(self.can, from_=2015, to_=2030, width=8,
-                                      textvariable=self.nam, command=self.thietLapGioiHanNgay)
-            self.button_dv[0] = Button(
-                self.can, text="Tim Kiem", command=self.timVe)
-            self.button_dv[1] = Button(
-                self.can, text="Quay lai", command=self.quayLai_dv)
-            self.cbb_dv[0] = ttk.Combobox(
-                self.can, width=17, textvariable=self.giaTriGaDen, values=tenGa)
-            self.cbb_dv[1] = ttk.Combobox(
-                self.can, width=17, textvariable=self.giaTriGaDi, values=tenGa)
-            self.label_dv[0].place(relx=0.1, rely=0.15)
-            self.label_dv[1].place(relx=0.1, rely=0.25)
-            self.cbb_dv[0].place(relx=0.2, rely=0.15)
-            self.cbb_dv[1].place(relx=0.2, rely=0.25)
-            self.spinbox[0].place(relx=0.2, rely=0.34)
-            self.spinbox[1].place(relx=0.25, rely=0.34)
-            self.spinbox[2].place(relx=0.3, rely=0.34)
-            self.button_dv[0].place(relx=0.3, rely=0.42)
-            self.button_dv[1].place(relx=0.2, rely=0.42)
-            self.title_dv.place(relx=0.175, rely=0.065)
-            self.line_dv[0] = self.can.create_line(-10, 180, 250, 180)
-            self.line_dv[1] = self.can.create_line(250, -3, 250, 180)
+
+            frame_dac_ve = Frame(self.can)
+            # self.kiemTraTrangThai(0)
+            # self.tenGa = select_Ga(self.cur).fetchall()
+            # tenGa = []
+            # for i in self.tenGa:
+            #     tenGa.append(i[1])
+            # self.tenGa.append(('Chọn', 'Chọn'))
+            # tenGa.append('chọn')
+            # self.giaTriGaDen.set('chọn')
+            # self.giaTriGaDi.set('chọn')
+            # self.trangThai[0] = 1
+            # for a in range(0, 2):
+            #     self.label_dv.append([])
+            #     self.cbb_dv.append([])
+            #     self.button_dv.append([])
+            #     self.line_dv.append([])
+            # for a in range(0, 3):
+            #     self.spinbox.append([])  # spinbox [0]:day, [1]:month, [2]:year
+            # self.title_dv = Label(
+            #     self.can, text="Dat ve tau", background='MediumPurple1')
+            # self.label_dv[0] = Label(
+            #     self.can, text="Ga den", background='MediumPurple1')
+            # self.label_dv[1] = Label(
+            #     self.can, text="Ga di", background='MediumPurple1')
+            # self.spinbox[0] = Spinbox(
+            #     self.can, from_=1, to_=31, width=2, textvariable=self.ngay)
+            # self.spinbox[1] = Spinbox(self.can, from_=1, to_=12, width=2,
+            #                           textvariable=self.thang, command=self.thietLapGioiHanNgay)
+            # self.spinbox[2] = Spinbox(self.can, from_=2015, to_=2030, width=8,
+            #                           textvariable=self.nam, command=self.thietLapGioiHanNgay)
+            # self.button_dv[0] = Button(
+            #     self.can, text="Tim Kiem", command=self.timVe)
+            # self.button_dv[1] = Button(
+            #     self.can, text="Quay lai", command=self.quayLai_dv)
+            # self.cbb_dv[0] = ttk.Combobox(
+            #     self.can, width=17, textvariable=self.giaTriGaDen, values=tenGa)
+            # self.cbb_dv[1] = ttk.Combobox(
+            #     self.can, width=17, textvariable=self.giaTriGaDi, values=tenGa)
+            # self.label_dv[0].place(relx=0.1, rely=0.15)
+            # self.label_dv[1].place(relx=0.1, rely=0.25)
+            # self.cbb_dv[0].place(relx=0.2, rely=0.15)
+            # self.cbb_dv[1].place(relx=0.2, rely=0.25)
+            # self.spinbox[0].place(relx=0.2, rely=0.34)
+            # self.spinbox[1].place(relx=0.25, rely=0.34)
+            # self.spinbox[2].place(relx=0.3, rely=0.34)
+            # self.button_dv[0].place(relx=0.3, rely=0.42)
+            # self.button_dv[1].place(relx=0.2, rely=0.42)
+            # self.title_dv.place(relx=0.175, rely=0.065)
+            # self.line_dv[0] = self.can.create_line(-10, 180, 250, 180)
+            # self.line_dv[1] = self.can.create_line(250, -3, 250, 180)
         elif(self.trangThai[0] == 0):
             self.title_dv['text']="Đặt vé tàu"
             self.kiemTraTrangThai(0)
@@ -1045,7 +1047,7 @@ class UIThanhToan(Frame):
                 column=1, columnspan=2, row=self.drow+4)
             Button(self.master, text="Chấp nhận", command=self.chapNhanTTS).grid(
                 column=3, row=self.drow+5, sticky=E)
-
+    
     def thanhToan(self):
         request = messagebox.askquestion(
             "THANH TOÁN VÉ", "Ban đồng ý thanh toán vé không?")

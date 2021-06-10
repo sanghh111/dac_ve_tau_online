@@ -1,11 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="D:\Sang\Hocki2-2020-2021\Do-An-CNPM\src\dac_ve_tau_online\dac_ve_tau.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1589"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainCho ngoi"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Cho ngoi" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="55"/><column index="2" value="50"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TRIGGER kiemTraUpdateVe
-BEFORE UPDATE on &quot;Ve&quot;
-Begin SELECT Case 
-When (SELECT trangThai
-from Ve
-Where old.maVe = &quot;Đã đặt&quot;) And 
-(SELECT ifNULL(maVe,Null)
-From &quot;Nhat Ky Thanh Toan&quot;
-Where old.maVe = maVe) &lt;&gt; NULL
-Then raise(ABORT,&quot;Nhat ky thanh toan van con&quot;) End;
-end</sql><current_tab id="0"/></tab_sql></sqlb_project>
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="D:\Sang\Hocki2-2020-2021\Do-An-CNPM\src\dac_ve_tau_online\dac_ve_tau.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="9337"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,2:mainVe"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Cho ngoi" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="55"/><column index="2" value="50"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="ChuyenDI" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="44"/><column index="2" value="50"/><column index="3" value="104"/><column index="4" value="87"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Khach hang" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="44"/><column index="2" value="47"/><column index="3" value="43"/><column index="4" value="67"/><column index="5" value="35"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Nhan vien" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="44"/><column index="2" value="65"/><column index="3" value="62"/><column index="4" value="73"/><column index="5" value="49"/><column index="6" value="56"/><column index="7" value="80"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Nhat Ky gia toa" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="50"/><column index="2" value="56"/><column index="3" value="87"/><column index="4" value="92"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Tau" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="50"/><column index="2" value="53"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Toa" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="50"/><column index="2" value="118"/><column index="3" value="47"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Ve" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="97"/><column index="2" value="49"/><column index="3" value="55"/><column index="4" value="50"/><column index="5" value="50"/><column index="6" value="71"/><column index="7" value="56"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TRIGGER kiemTraTruocKhiThemCD
+BEFORE INSERT on &quot;ChuyenDI&quot;
+BEGIN
+	SELECT
+		CASE
+			WHEN(SELECT count(*)
+				From &quot;Nhat Ky gia toa&quot;
+				Where new.ngayKhoiHanh BETWEEN ngayBatDau and ngayKetThuc &lt;&gt; 4)
+			Then RAISE(ABORT,&quot;Thieu gia tien ngay BatDau va ngayKetThuc&quot;)
+End;
+End;</sql><sql name="SQL 2">Insert into &quot;ChuyenDI&quot;
+    values(&quot;123123&quot;,&quot;T01&quot;,&quot;SG&quot;,&quot;HN&quot;,&quot;2021-06-15&quot;)
+
+SELECT *
+From &quot;Cho ngoi&quot;
+
+SELECT *
+From Ve left join &quot;Toa&quot;
+on Ve.maToa == Toa.maToa
+
+SELECT Gia
+From Toa as A inner join &quot;Nhat Ky gia toa&quot; as B
+on A.maToa = B.maToa
+Where  &quot;2021-06-15&quot; BETWEEN B.ngayBatDau and B.ngayKetThuc
+
+
+
+WHEN(SELECT *
+				From &quot;Nhat Ky gia toa&quot;
+				Where &quot;2021-06-15&quot; BETWEEN ngayBatDau and ngayKetThuc
+				GROUP By maToa</sql><sql name="Edit Trigger kiemTraTruocKhiThemCD">DROP TRIGGER &quot;main&quot;.&quot;kiemTraTruocKhiThemCD&quot;;
+CREATE TRIGGER kiemTraTruocKhiThemCD
+BEFORE INSERT on &quot;ChuyenDI&quot;
+BEGIN
+	SELECT
+		CASE
+			WHEN((SELECT count(*)
+				From &quot;Nhat Ky gia toa&quot;
+				Where new.ngayKhoiHanh BETWEEN ngayBatDau and ngayKetThuc) &lt;&gt; 4)
+			Then RAISE(ABORT,&quot;Thieu gia tien ngayBatDau va ngayKetThuc&quot;)
+End;
+End</sql><sql name="Edit Trigger themChuyenDI">DROP TRIGGER &quot;main&quot;.&quot;themChuyenDI&quot;;
+CREATE TRIGGER themChuyenDI
+after INSERT on &quot;ChuyenDI&quot;
+Begin
+	Insert into &quot;Ve&quot; 
+	SELECT  new.maCD || B.maCho,new.maCD,B.maCho,B.maToa,new.maTau,&quot;Trống&quot;,A.Gia
+	From &quot;Nhat Ky gia toa&quot; as A
+	Inner join &quot;Cho ngoi&quot; as B
+	On a.maToa = B.maToa
+	And new.ngayKhoiHanh BETWEEN A.ngayBatDau AND A.ngayKetThuc
+	Order by
+	b.stt ASC;
+End</sql><current_tab id="1"/></tab_sql></sqlb_project>

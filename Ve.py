@@ -53,17 +53,18 @@ class Ve():
 
     def getSoGhe(self):
         heso =0
+        soGhe=None
         if self.tenToa == 'Ngồi mềm điều hòa':
-            heso = 0
+            soGhe=self.maCho[4:]
         elif self.tenToa == 'Ngồi cứng điều hòa':
-            heso = 64
+            soGhe =self.maCho[4:]
         elif self.tenToa == 'Toa 4 chiều':
-            heso = 64+80
+            soGhe =self.maCho[3:]
         elif self.tenToa == 'Toa 6 chiều':
-            heso = 80+64+24
-        soGhe = self.maVe[len(self.maCD)+1:]
+            soGhe =self.maCho[3:]
+        # soGhe = self.maVe[len(self.maCD)+1:]
         soGhe = int(soGhe)
-        return (soGhe-heso)
+        return soGhe
 
     def getTenToa(self):
         return self.tenToa

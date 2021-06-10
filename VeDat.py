@@ -12,7 +12,7 @@ class VeDat():
             self.maKH = nkVe[0]
             self.maVe = nkVe[1]
             year = int(nkVe[2][0:4])
-            month = int(nkVe[2][5:7])
+            month = int(nkVe[2][5:7])   
             day = int(nkVe[2][8:10])
             self.ngayHetHan = date(year=year,month=month,day=day)
         else :
