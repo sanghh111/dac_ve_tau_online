@@ -829,15 +829,15 @@ class QuanLyToaTau(Frame):
         #Create atrribute for Frame record
         #Mã toa
         Label(record,text="Mã toa").grid(column=0,row=0)
-        Entry(record,textvariable=self.value[0]).grid(column=1,row=0)
+        Label(record,textvariable=self.value[0]).grid(column=1,row=0,sticky=W)
 
         #Tên toa
         Label(record,text="Tên toa").grid(column=2,row=0)
-        Entry(record,textvariable=self.value[1]).grid(column=3,row=0)
+        Label(record,textvariable=self.value[1]).grid(column=3,row=0,sticky=W)
 
         #Chỗ ngồi
         Label(record,text="Chỗ ngồi").grid(column=4,row=0)
-        Entry(record,textvariable=self.value[2]).grid(column=5,row=0)
+        Label(record,textvariable=self.value[2]).grid(column=5,row=0,sticky=W)
 
         #Giá
         Label(record,text="Giá").grid(column=0,row=1)
@@ -927,14 +927,14 @@ class QuanLyToaTau(Frame):
         try:
             self.selected
         except:
-            print("123")
             return
         a = self.tree.item(self.selected,"values")
         if(len(a)==3):
             messagebox.showinfo("THÔNG BÁO","XOÁ KHÔNG THÀNH CÔNG")
         else:
             trang_thai = delete_NKGT(a[0],a[4])
-            if trang_thai:
+            print('trang_thai: ', trang_thai)
+            if trang_thai == True:
                 try:
                     self.tree.delete(self.selected)
                 except:
@@ -942,12 +942,14 @@ class QuanLyToaTau(Frame):
                     con.rollback()
                 messagebox.showinfo("THÔNG BÁO","XÓA THÀNH CÔNG")
                 con.commit()
-        self.value[1].set("")
-        self.value[1].set("")
-        self.value[2].set(0)
-        self.value[3].set(0)
-        self.value[4].set("YY-MM-DD")
-        self.value[5].set("YY-MM-DD")
+                self.value[1].set("")
+                self.value[1].set("")
+                self.value[2].set(0)
+                self.value[3].set(0)
+                self.value[4].set("YY-MM-DD")
+                self.value[5].set("YY-MM-DD")
+            else: 
+                messagebox.showerror("THÔNG BÁO",trang_thai)
 
     def suaGiaToa(self):
         try:

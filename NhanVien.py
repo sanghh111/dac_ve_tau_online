@@ -11,7 +11,6 @@ class NhanVien():
         if matKhau:
             self.tenTk=tk
             print(self.tenTk)
-            self.matKhau = matKhau
             thong_tin = select_thong_tinNV(self.tenTk)
             # if(thong_tin):
             self.ten = thong_tin[0]
@@ -20,7 +19,18 @@ class NhanVien():
             self.cmnd = thong_tin[4]
             self.sdt = thong_tin[5]
             self.chucVu = thong_tin[6]
-            return True
+            tam = mk
+            mk = taoPass(mk,thong_tin[7])
+            mk = md5_pass(mk)
+            if mk == thong_tin[1]:
+                a = update_mk_NV(thong_tin[0],tam)
+                print('a: ', a)
+                if a == True :
+                    con.commit()
+                else:
+                    con.rollback()
+                return True
+            return False
         else:
             return False
 

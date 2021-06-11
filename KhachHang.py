@@ -80,5 +80,17 @@ Ngày sinh: {ngaySinh}'''.format(ten=self.tenKH,
                 return False
             con.commit()
             return True
+
+    def getMaKH(self):
+        return self.maKH
+
+    def getTenKH(self):
+        return self.tenKH
+
+    def getCmnd(self):
+        return self.cmnd
+    
+    def getNgaySinh(self):
+        return self.ngaySinh
 # Ve("SG-HN01-200")
 # a = KhachHang(

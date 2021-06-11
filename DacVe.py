@@ -8,6 +8,7 @@ from typing import List, NewType
 from db import *
 from tkinter.constants import DISABLED, NORMAL
 from Ve import Ve
+import tkinter.font as TkFont
 # import threading
 
 
@@ -59,6 +60,15 @@ class App(Frame):
     def dacVeTau(self):
         if(self.trangThai[0] == None and self.trangThai[2] == None):
             self.kiemTraTrangThai(0)
+            ngay = []
+            for i in range(1,32):
+                ngay.append(i)
+            thang = []
+            for i in range(1,13):
+                thang.append(i)
+            nam = []
+            for i in range(1970,2021):
+                nam.append(i)
             self.tenGa = select_Ga(self.cur).fetchall()
             tenGa = []
             for i in self.tenGa:
@@ -78,9 +88,9 @@ class App(Frame):
             self.title_dv = Label(self.can,text="Dat ve tau",background='thistle1')
             self.label_dv[0]= Label(self.can,text="Ga den",background='thistle1')
             self.label_dv[1]= Label(self.can,text="Ga di",background='thistle1')
-            self.spinbox[0] =  Spinbox(self.can,from_=1,to_=31,width=2,textvariable=self.ngay)
-            self.spinbox[1] =  Spinbox(self.can,from_=1,to_=12,width=2,textvariable=self.thang,command=self.thietLapGioiHanNgay)
-            self.spinbox[2] = Spinbox(self.can,from_=2015,to_=2030,width=7,textvariable=self.nam,command=self.thietLapGioiHanNgay)
+            self.spinbox[0] =  ttk.Combobox(self.can,value=ngay,textvariable=self.ngay,width=2)
+            self.spinbox[1] =  ttk.Combobox(self.can,value = thang,textvariable=self.thang,width=2)
+            self.spinbox[2] = ttk.Combobox(self.can,value=nam,width=6,textvariable=self.nam)
             # self.button_dv[1]=Button(self.can,text="Quay lai",command=self.quayLai_dv)
             self.button_dv[0]=Button(self.can,text="Tim Kiem",command=self.timVe)
             self.cbb_dv[0]=ttk.Combobox(self.can,width=18,textvariable=self.giaTriGaDen,values=tenGa)
@@ -107,13 +117,14 @@ class App(Frame):
 
     def thanhToan(self):
         if(self.trangThai[1] == None):
+            self.line_tt=[None,None]
             self.kiemTraTrangThai(1)
             self.trangThai[1] = 1
             self.CMND = StringVar()
             self.title_tt = Label(
-                self.can, text="Thanh toan ve tau", background='MediumPurple1')
+                self.can, text="Thanh toan ve tau", background='thistle1')
             self.label_tt = Label(
-                self.can, text="CMND", background='MediumPurple1')
+                self.can, text="CMND", background='thistle1')
             self.entry_tt = Entry(self.can, textvariable=self.CMND)
             self.button_tt = Button(
                 self.can, text="Tim kiem", command=self.timKiemVeDatTruoc)
@@ -121,10 +132,14 @@ class App(Frame):
             self.label_tt.place(relx=0.05, rely=0.2)
             self.entry_tt.place(relx=0.175, rely=0.2)
             self.button_tt.place(relx=0.3, rely=0.4)
+            self.line_tt[0] = self.can.create_line(-10,180,250,180)
+            self.line_tt[1] = self.can.create_line(250,-3,250,180)
         elif(self.trangThai[1] == 0):
             self.kiemTraTrangThai(1)
             self.trangThai[1] = 1
             self.hienThiThanhToan()
+            self.line_tt[0] = self.can.create_line(-10,180,250,180)
+            self.line_tt[1] = self.can.create_line(250,-3,250,180)
         else:
             pass
 
@@ -265,6 +280,15 @@ class App(Frame):
         if(self.trangThai[2] == None and self.trangThai[0] == None):
             self.kiemTraTrangThai(2)
             self.tenGa = select_Ga(self.cur).fetchall()
+            ngay = []
+            for i in range(1,32):
+                ngay.append(i)
+            thang = []
+            for i in range(1,13):
+                thang.append(i)
+            nam = []
+            for i in range(1970,2021):
+                nam.append(i)
             tenGa = []
             for i in self.tenGa:
                 tenGa.append(i[1])
@@ -283,9 +307,9 @@ class App(Frame):
             self.title_dv = Label(self.can,text="Tìm kiếm vé tàu",background='thistle1')
             self.label_dv[0]= Label(self.can,text="Ga den",background='thistle1')
             self.label_dv[1]= Label(self.can,text="Ga di",background='thistle1')
-            self.spinbox[0] =  Spinbox(self.can,from_=1,to_=31,width=2,textvariable=self.ngay)
-            self.spinbox[1] =  Spinbox(self.can,from_=1,to_=12,width=2,textvariable=self.thang,command=self.thietLapGioiHanNgay)
-            self.spinbox[2] = Spinbox(self.can,from_=2015,to_=2030,width=7,textvariable=self.nam,command=self.thietLapGioiHanNgay)
+            self.spinbox[0] =  ttk.Combobox(self.can,value=ngay,textvariable=self.ngay,width=2)
+            self.spinbox[1] =  ttk.Combobox(self.can,value = thang,textvariable=self.thang,width=2)
+            self.spinbox[2] = ttk.Combobox(self.can,value=nam,width=6,textvariable=self.nam)
             # self.button_dv[1]=Button(self.can,text="Quay lai",command=self.quayLai_dv)
             self.button_dv[0]=Button(self.can,text="Tim Kiem",command=self.timVe)
             self.cbb_dv[0]=ttk.Combobox(self.can,width=18,textvariable=self.giaTriGaDen,values=tenGa)
@@ -404,7 +428,10 @@ class App(Frame):
                     for i in self.spinbox:
                         i.place_forget()
                     for i in self.button_dv:
-                        i.place_forget()
+                        try:
+                            i.place_forget()
+                        except:
+                            pass
                     for i in range(2):
                         self.can.delete(self.line_dv[i])
                     self.xoaCanTV()
@@ -437,9 +464,17 @@ class App(Frame):
                     for i in self.spinbox:
                         i.place_forget()
                     for i in self.button_dv:
-                        i.place_forget()
+                        try:
+                            i.place_forget()
+                        except:
+                            pass
+                    for i in self.line_tt:
+                        self.can.delete(i)
                     for i in range(2):
-                        self.can.delete(self.line_dv[i])
+                        try:
+                            self.can.delete(self.line_dv[i])
+                        except:
+                            pass
                     self.xoaCanTV()
                     try:
                         self.trangThaiToa
@@ -727,12 +762,11 @@ class App(Frame):
                     a.place(x=68+i*34,y=230+j*40)
                     if(self.trangThai[2] == 1):
                         a["state"] = DISABLED
-                    if(self.thongTinVe[dem-1+144][3] == "Trống"):
-                        try:
-                            self.button_ve[dem-1+144] = a
-                        except:
-                            self.button_ve.append(a)
-                    else:
+                    try:
+                        self.button_ve[dem-1+144] = a
+                    except:
+                        self.button_ve.append(a)
+                    if(self.thongTinVe[dem-1+144][3] != "Trống"):
                         a["state"] = DISABLED
                         a["bg"] = 'red'
                         try:
@@ -770,12 +804,11 @@ class App(Frame):
                     a.place(x=68+i*34,y=222+j*30)
                     if(self.trangThai[2] == 1):
                         a["state"] = DISABLED
-                    if(self.thongTinVe[dem-1+168][3] == "Trống"):
-                        try:
-                            self.button_ve[dem-1+168] = a
-                        except:
-                            self.button_ve.append(a)
-                    else:
+                    try:
+                        self.button_ve[dem-1+172] = a
+                    except:
+                        self.button_ve.append(a)
+                    if(self.thongTinVe[dem-1+172][3] != "Trống"):
                         a["state"] = DISABLED
                         a["bg"] = 'red'
                         try:
@@ -783,7 +816,7 @@ class App(Frame):
                         except:
                             self.button_ve.append(a)
                     try:
-                        if dem-1+168 in self.giuCho:
+                        if dem-1+172 in self.giuCho:
                             a["bg"]='yellow'
                     except:
                         pass
@@ -842,18 +875,18 @@ class App(Frame):
         elif kw['ten'] == 'Toa 4 chiều':
             heso = 64+80
         elif kw['ten'] == 'Toa 6 chiều':
-            heso = 80+64+24
+            heso = 80+64+28
         if((kw['dem'], kw['ten']) in self.DSC):
-            print("Co ghe: ", self.DSC.index((kw['dem'], kw['ten'])))
             self.ViewDSC.xoaGhe(self.DSC.index((kw['dem'], kw['ten'])))
             self.DSC.remove((kw['dem'], kw['ten']))
             self.button_ve[kw['dem']+heso-1]['bg'] = 'Light green'
             self.giuCho.remove(kw['dem']+heso-1)
         else:
-            print("chua co")
+            print(kw['dem']-1+heso)
             self.DSC.append((kw['dem'], kw['ten']))
             self.ViewDSC.themGhe(kw['dem'], kw['ten'],
                                  self.thongTinVe[kw['dem']-1+heso][4])
+            print(len(self.button_ve))
             self.button_ve[kw['dem']-1+heso]['bg'] = 'yellow'
             self.giuCho.append(kw['dem']+heso-1)
 
@@ -862,9 +895,18 @@ class App(Frame):
 
     def tatDanhSachDatVe(self):
         try:
-            self.giuCho.clear()
             self.ViewDSC.master.destroy()
             del(self.ViewDSC)
+            for i in self.giuCho:
+                if self.viTritoa==0 and i>=1 and i<=64:
+                    self.button_ve[i]['bg'] = 'Light green'
+                elif self.viTritoa==1 and i>=65 and i<=144:
+                    self.button_ve[i]['bg'] = 'Light green'
+                elif self.viTritoa ==2 and i>=145 and i<=172:
+                    self.button_ve[i]['bg'] = 'Light green'
+                elif self.viTritoa ==2 and i>=173 and i<=214:
+                    self.button_ve[i]['bg'] = 'Light green'
+            self.giuCho.clear()
             self.DSC.clear()
             self.giuCho=[]
             self.DSC=[]
@@ -901,6 +943,8 @@ class App(Frame):
         UIThanhToan(Toplevel(), kh=kh, object=self,
                     trangThai=True, dsMaVe=self.maVeDSC)
 
+    def sayHello(self):
+        print("Hello")
 
 class DanhSachVe(Frame):
     def __init__(self, master, **kw):
@@ -922,11 +966,15 @@ class DanhSachVe(Frame):
             column=2, row=1, sticky=W)
         self.btnDV = Button(self.master, text="Đặt Vé", command=self.datVe)
         self.demRow = 2
+        self.master.protocol("WM_DELETE_WINDOW",self.closing)
         self.master.mainloop
 
     def guiTinHieu(self, kw):
         kw['object'].nhanTinHieu(object=self)
 
+    def closing(self):
+        self.kw.tatDanhSachDatVe()
+        
     def themGhe(self, soGhe, tenToa, gia):
         tam1 = Label(self.master, text=soGhe)
         tam1.grid(column=0, row=self.demRow)
@@ -975,7 +1023,6 @@ class DanhSachVe(Frame):
             pass
 
     def __del__(self):
-        print("Xóa UINÀY")
         pass
         # del(self.kw.ViewDSC)
         # del(self.kw.DCS)
@@ -1015,15 +1062,19 @@ class UIThongTinKH(Frame):
         Entry(self.master, textvariable=self.value[0]).grid(column=1, row=1)
         Entry(self.master, textvariable=self.value[1]).grid(column=1, row=2)
         # Entry(self.master, textvariable=self.value[2]).grid(column=1, row=3)
-        ttk.Combobox(self.master, textvariable=self.value[2], value=self.ngay, width=5).grid(
-            column=2, row=3, sticky=E)
-        ttk.Combobox(self.master, textvariable=self.value[3], value=self.thang, width=5).grid(
-            column=3, row=3)
-        ttk.Combobox(self.master, textvariable=self.value[4], value=self.nam, width=10).grid(
-            column=4, row=3)
+
+        frame_ngay = Frame(self.master)
+        frame_ngay.grid(column=1,row=3) 
+
+        ttk.Combobox(frame_ngay, textvariable=self.value[2], value=self.ngay, width=2).grid(
+            column=0, row=0)
+        ttk.Combobox(frame_ngay, textvariable=self.value[3], value=self.thang, width=2).grid(
+            column=1, row=0)
+        ttk.Combobox(frame_ngay, textvariable=self.value[4], value=self.nam, width=5).grid(
+            column=2, row=0)
         # them(ten =ten,tuoi=tuoi,cmnd=cmnd)
         Button(self.master, text="Xác nhận",
-               command=self.onClick).grid(column=4, row=4)
+               command=self.onClick).grid(column=3, row=3)
         self.trangThai = Label(self.master, text="Nhập thiếu thuộc tính")
         self.master.mainloop
 
@@ -1047,7 +1098,6 @@ class UIThongTinKH(Frame):
         # self.kw.setdsKH(self.kh)
         pass
 
-
 class UIThanhToan(Frame):
     def __init__(self, master, **kw):
         # super.__init__()
@@ -1059,10 +1109,7 @@ class UIThanhToan(Frame):
             self.kh = kw['kh']
         if 'dsMaVe' in kw:
             self.dsMaVe = kw['dsMaVe']
-        print('self.kh: ', self.kh)
-        # print('self.dsMaVe: ', self.dsMaVe)
         self.ve = []
-        print(self.kh)
         try:
             for i in self.dsMaVe:
                 self.ve.append(Ve(i))
@@ -1142,13 +1189,14 @@ class UIThanhToan(Frame):
                     con.rollback()
                     messagebox.showerror("THÔNG BÁO","THANH TOÁN KHÔNG THÀNH CÔNG")
                     return
-                con.commit()
-                messagebox.showinfo("THÔNG BÁO","THANH TOÁN THÀNH CÔNG")
+            con.commit()
+            messagebox.showinfo("THÔNG BÁO","THANH TOÁN THÀNH CÔNG")
             try:
                 del(self.object.maVeDSC)
             except:
                 self.object.loadTLDVT()
             self.master.destroy()
+            XuatThongTinVe(Toplevel(),self.ve,self.kh,"TT")
 
     def chapNhanTTS(self):
         if self.soNgay.get() <= 0 and self.soNgay.get() >= self.gioiHan:
@@ -1168,6 +1216,120 @@ class UIThanhToan(Frame):
             except:
                 pass
             self.master.destroy()
+            XuatThongTinVe(Toplevel(),self.ve,self.kh,"TTS")
 
+class XuatThongTinVe(Frame):
+    def __init__(self, master, veDat,khachHang,loai):
+        self.master = master
+        self.veDat = veDat
+        self.kh = khachHang
+        self.loai = loai
+        self.display()
+    def display(self):
+        helv12 = TkFont.Font(family="Helvetica",size=12)
+
+        nooteBook = ttk.Notebook(self.master)
+        nooteBook.pack(anchor=CENTER)
+
+        frame_thongTinKH = Frame(nooteBook,height=200,width=200)
+        frame_thongTinKH.pack(fill="both",expand="TRUE")
+
+        frame_thongTinVe = Frame(nooteBook,height=200,width=200)
+        frame_thongTinVe.pack(fill="both",expand="TRUE")
+
+        nooteBook.add(frame_thongTinKH,text="Thông tin khách hàng")
+        nooteBook.add(frame_thongTinVe,text="Thông tin vé")
+        
+        Label(frame_thongTinKH,text="maKH",font=helv12).grid(column=0,row=0,sticky=W)
+        Label(frame_thongTinKH,text="Tên KH",font=helv12).grid(column=0,row=1,sticky=W)
+        Label(frame_thongTinKH,text="CMND",font=helv12).grid(column=0,row=2,sticky=W)
+        Label(frame_thongTinKH,text="Ngày Sinh",font=helv12).grid(column=0,row=3,sticky=W)
+    
+        Label(frame_thongTinKH,font=helv12,text=self.kh.getMaKH()).grid(column=1,row=0,sticky=W)
+        Label(frame_thongTinKH,font=helv12,text=self.kh.getTenKH()).grid(column=1,row=1,sticky=W)
+        Label(frame_thongTinKH,font=helv12,text=self.kh.getCmnd()).grid(column=1,row=2,sticky=W)
+        Label(frame_thongTinKH,font=helv12,text=self.kh.getNgaySinh()).grid(column=1,row=3,sticky=W)
+        
+        Label(frame_thongTinKH,text="",width=8).grid(column=0,row=5)
+
+        # Label(frame_thongTinVe,text="",width=8).grid(column=0,row=0)
+
+        style = ttk.Style()
+        #ping a theme
+        style.theme_use('default')
+
+        #configure Treeview
+        style.configure("Treeview",
+            background='#D3D3D3',
+            foreground='black',
+            rowheight=25,
+            fieldbackground='silver')
+        
+        scrollbar_Tree = Scrollbar(frame_thongTinVe)
+        scrollbar_Tree.pack(side=RIGHT,fill=Y)
+        treeView=ttk.Treeview(frame_thongTinVe,yscrollcommand=scrollbar_Tree)
+        treeView.pack()
+
+        if self.loai == "TTS":
+            treeView['column']=('Mã vé','Ga đi',"Ga đến","Ngày đặt","Ngày hết hạn","Giá")
+            
+            treeView.column('#0',stretch=NO,width=0)
+            treeView.column('Mã vé',width=100)
+            treeView.column('Ga đi',width=80)
+            treeView.column('Ga đến',width=80)
+            treeView.column('Ngày đặt',width=80)
+            treeView.column('Ngày hết hạn',width=100)
+            treeView.column('Giá',width=80)
+            
+            treeView.heading("Mã vé",text="Mã vé")
+            treeView.heading("Ga đi",text="Ga đi")
+            treeView.heading("Ga đến",text="Ga đến")
+            treeView.heading("Ngày đặt",text="Ngày đặt")
+            treeView.heading("Ngày hết hạn",text="Ngày hết hạn")
+            treeView.heading("Giá",text="Giá")
+            
+            iid = 0
+            for i in self.veDat:
+                treeView.insert("","end",iid,value=(i.getMaVe(),
+                                                    i.getGaDi(),
+                                                    i.getGaDen(),
+                                                    i.getNgayDat(),
+                                                    i.getNgayHetHan(),
+                                                    i.getGia()))
+                iid+=1
+        elif self.loai == "TT":
+            treeView['column']=('Mã vé','Ga đi',"Ga đến","Ngày khởi hành","Giá")
+            
+            treeView.column('#0',stretch=NO,width=0)
+            treeView.column('Mã vé',width=100)
+            treeView.column('Ga đi',width=80)
+            treeView.column('Ga đến',width=80)
+            treeView.column('Ngày khởi hành',width=100)
+            treeView.column('Giá',width=80)
+            
+            treeView.heading("Mã vé",text="Mã vé")
+            treeView.heading("Ga đi",text="Ga đi")
+            treeView.heading("Ga đến",text="Ga đến")
+            treeView.heading("Ngày khởi hành",text="Ngày khởi hành")
+            treeView.heading("Giá",text="Giá")
+            
+            iid = 0
+            for i in self.veDat:
+                treeView.insert("","end",iid,value=(i.getMaVe(),
+                                                    i.getGaDi(),
+                                                    i.getGaDen(),
+                                                    i.getNgayKhoiHanh(),
+                                                    i.getGia()))
+                iid+=1
+        
+
+        # Button(frame_thongTinKH, text="Hoàn Tất",command=self.hoanTat).grid(row=6,column=2,stick=E)
+        self.master.geometry("550x300")
+        self.master.mainloop
+
+
+    def hoanTat(self):
+        self.trangThai =  True
+        self.master.destroy()
 
 App(Tk())

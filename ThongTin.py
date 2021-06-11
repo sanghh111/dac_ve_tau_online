@@ -47,10 +47,10 @@ def display(self):
         Button(frame_thongTinVeDat, text="Trạng Thái").grid(row=0,sticky=W,column=4)
 
         for i in self.VeDat:
-        Label(frame_thongTinVeDat,font=helv12,text=self.veDat.maVe()).grid(column=1,row=0,sticky=W)
-        Label(frame_thongTinVeDat,font=helv12,text=self.veDat.ngayDat()).grid(column=1,row=1,sticky=W)
-        Label(frame_thongTinVeDat,font=helv12,text=self.veDat.ngayHetHan()).grid(column=1,row=2,sticky=W)
-        Label(frame_thongTinVeDat,font=helv12,text=self.veDat.trangThai()).grid(column=1,row=3,sticky=W)
+                Label(frame_thongTinVeDat,font=helv12,text=self.veDat.maVe()).grid(column=1,row=0,sticky=W)
+                Label(frame_thongTinVeDat,font=helv12,text=self.veDat.ngayDat()).grid(column=1,row=1,sticky=W)
+                Label(frame_thongTinVeDat,font=helv12,text=self.veDat.ngayHetHan()).grid(column=1,row=2,sticky=W)
+                Label(frame_thongTinVeDat,font=helv12,text=self.veDat.trangThai()).grid(column=1,row=3,sticky=W)
        
        
         Button(frame_thongTinKH, text="Hoàn Tất",command=self.hoanTat).grid(row=6,column=2,stick=E)

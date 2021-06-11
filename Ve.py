@@ -24,6 +24,9 @@ class Ve():
         self.trangThai = ve[8]
         self.gia = ve[9]
 
+    def getMaVe(self):
+        return self.maVe
+
     def getMaCD(self):
         return self.maCD
 
@@ -95,8 +98,16 @@ class Ve():
         makh= kh.timMaKH()
         print('makh: ', makh)
         trangThai = insert_NKDC(con,cur,makh,self.maVe,today,hetHan)
+        if trangThai == True:
+            self.ngayHetHan = hetHan
+            self.ngayDat = today
         return trangThai
 
+    def getNgayDat(self):
+        return self.ngayDat
+
+    def getNgayHetHan(self):
+        return self.ngayHetHan
 # a=Ve("SG-HN01-200")
 # a.thanhToanSau(32)
 # a.chuyenDate()
