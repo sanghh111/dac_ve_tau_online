@@ -73,7 +73,8 @@ class Ve():
         self.kh= kh
         makh= kh.timMaKH()
         trangThai = Insert_NKTT(con,cur,self.maVe,makh)
-        print('trangThai: ', trangThai)
+        return trangThai
+        
         
     def chuyenDate(self):
         to_day = date.today()
@@ -92,8 +93,9 @@ class Ve():
         hetHan =today + a
         self.kh= kh
         makh= kh.timMaKH()
+        print('makh: ', makh)
         trangThai = insert_NKDC(con,cur,makh,self.maVe,today,hetHan)
-        print('insert_NKDC: ', trangThai)
+        return trangThai
 
 # a=Ve("SG-HN01-200")
 # a.thanhToanSau(32)

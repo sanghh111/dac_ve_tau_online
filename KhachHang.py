@@ -8,6 +8,7 @@ class KhachHang():
         self.maKH = None
         self.cmnd = None
         self.ngaySinh = None
+        self.trangThai = False
 
     def setTenKH(self, tenKH):
         self.tenKH = tenKH
@@ -51,4 +52,33 @@ Ngày sinh: {ngaySinh}'''.format(ten=self.tenKH,
         self.tenKH = kh[0]
         self.maKH = kh[1]
         self.ngaySinh = kh[2]
+
+
+    def setCMND_DB(self,cmnd):
+        trangThai = select_kh_cmnd_all(cmnd)
+        print('trangThai: ', trangThai)
+        if trangThai:
+            self.cmnd=cmnd
+            self.maKH = trangThai[0]
+            self.tenKH = trangThai[1]
+            self.ngaySinh = trangThai[3]
+            self.trangThai = True
+        else:
+            self.trangThai = False
+
+    def isNULL(self):
+        return not self.trangThai
+
+    def getCacVeDat(self):
+        return select_NKDV_maKH(self.maKH)
+    
+    def huyVeDat(self,maVe) -> bool:
+        for i in maVe:
+            dung = huy_NKDV(i,self.maKH)
+            if dung != True:
+                con.rollback()
+                return False
+            con.commit()
+            return True
 # Ve("SG-HN01-200")
+# a = KhachHang(

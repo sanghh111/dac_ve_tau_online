@@ -20,7 +20,7 @@ From ChuyenDi as A
 Where ngayKhoiHanh in ("{Ngay}")'''.format(Ngay=ngay)
     cau_truy_van += '\nAnd maGaXuatPhat = "{Ga_di}"'.format(Ga_di=ga_di)    
     cau_truy_van += '\nAnd maGaNoiDen = "{Ga_den}"'.format(Ga_den=ga_den)
-    # print(cau_truy_van)
+    print(cau_truy_van)
     try:
         result = cur.execute(cau_truy_van)
     except:
@@ -115,6 +115,7 @@ WHERE A.maToa=B.maToa)as "Tên toa"
 ,Gia
 From "Ve" as A
 Where maCD="{maCd}"'''.format(maCd=maCD)
+    print('cau_truy_van: ', cau_truy_van)
     try:
         result = cur.execute(cau_truy_van).fetchall()
     except:
@@ -198,6 +199,18 @@ Where Cmnd = '{Cmnd}';'''.format(Cmnd=cmnd)
         return result[0]
 
 
+
+def select_kh_cmnd_all(cmnd):
+    cau_truy_van = '''Select *
+    from "Khach hang"
+    Where Cmnd = '{Cmnd}';'''.format(Cmnd=cmnd)
+    try:
+        result = cur.execute(cau_truy_van).fetchone()
+    except:
+        result = None
+    if result:
+        return result
+
 def Insert_NKTT(con, cur, maVe, maKH):
     day = str(date.today())
     cau_truy_van = '''Insert into "Nhat Ky Thanh Toan"
@@ -205,17 +218,12 @@ Values("{ma_ve}","{ma_kh}","{Day}")'''.format(
         ma_ve=maVe, ma_kh=maKH, Day=day)
     print('cau_truy_van: ', cau_truy_van)
     try:
-        result = cur.execute(cau_truy_van)
-    except:
-        result = None
-    if result:
-        con.commit()
+        cur.execute(cau_truy_van)
         return True
-    else:
-        return False
+    except Exception as e:
+        return e
 
-
-def insert_NKDC(con, cur, maKH, maVe, ngayDat, ngayHetHan):
+def insert_NKDC(con, cur, maKH, maVe, ngayDat, ngayHetHan)->bool:
     maDC = maKH + "-" + maVe
     cau_truy_van = '''Insert into "Nhat ky dat cho"(maDC,maKH,maVe,ngayDat,ngayHetHan)
 Values("{ma_dc}","{ma_kh}","{ma_ve}","{ngay_dat}","{ngay_het_han}")'''.format(
@@ -223,14 +231,10 @@ Values("{ma_dc}","{ma_kh}","{ma_ve}","{ngay_dat}","{ngay_het_han}")'''.format(
     )
     print('cau_truy_van: ', cau_truy_van)
     try:
-        result =  cur.execute(cau_truy_van)
-    except: 
-        result = None
-    if result:
-        con.commit()
-    else:
-        return False
-
+        cur.execute(cau_truy_van)
+        return True
+    except:
+        return False 
 def select_NKDV_maVe(cur,madc):
     cau_truy_van = '''Select maKH,maVe,ngayHetHan
 from "Nhat ky dat cho"
@@ -242,6 +246,31 @@ where maDC="{maDC}"'''.format(maDC=madc)
     if result:
         return result[0]
 
+def select_NKDV_maKH(maKH):
+    cau_truy_van = '''Select maVe,ngayDat,ngayHetHan,trangThai
+    From "Nhat ky dat cho"
+    Where maKH = "{ma}"
+        AND trangThai = "Chưa thanh toán"
+    '''.format(ma=maKH)
+    try:
+        result = cur.execute(cau_truy_van).fetchall()
+    except:
+        result = None
+    if result:
+        return result
+
+def huy_NKDV(maVe,maKH):
+    cau_truy_van = '''Update "Nhat ky dat cho"
+    Set trangThai = "Hủy vé"
+    Where maVe = "{mv}"
+    And maKH = "{kh}"
+    '''.format(mv=maVe,kh=maKH)
+    try:
+        result = cur.execute(cau_truy_van)
+        return True
+    except Exception as e:
+        return e
+        
 def select_kh_maKh(cur,maKH):
     cau_truy_van = '''Select tenKh,Cmnd,ngaySinh
 from "Khach hang"
@@ -597,6 +626,8 @@ def update_NV(tkc,tkm,matKhau,tenNV,ngaySinh,cmnd,sdt,chucVu):
         return True
     except Exception as e:
         return e
+
+# print(date.now())
 
 con, cur = connect_DB('dac_ve_tau.db')
 # con.rollback()

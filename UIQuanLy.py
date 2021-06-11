@@ -1079,6 +1079,7 @@ class QuanLyVeTau(Frame):
                                                                         j[5]
                                                                         ))
                 self.kh[self.IID].append(j)
+                dem = dem+1/10
             self.IID += 1
 
         frame = Frame(self.master)
