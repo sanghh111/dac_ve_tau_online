@@ -46,6 +46,7 @@ class App(Frame):
         self.display()
 
     def display(self):
+        self.master.title("")
         self.master.minsize(width=600, height=400)
         self.master.maxsize(width=600, height=400)
         self.master.resizable(1, 1)
@@ -122,7 +123,7 @@ class App(Frame):
             self.trangThai[1] = 1
             self.CMND = StringVar()
             self.title_tt = Label(
-                self.can, text="Thanh toan ve tau", background='thistle1')
+                self.can, text="THANH TOÁN VÉ TÀU", background='thistle1')
             self.label_tt = Label(
                 self.can, text="CMND", background='thistle1')
             self.entry_tt = Entry(self.can, textvariable=self.CMND)
@@ -184,9 +185,9 @@ class App(Frame):
                 self.tree['column']=("Mã vé","Ngày đặt","Ngày hết hạn","Trạng thái")
 
                 self.tree.column('#0', width=0, stretch = NO)
-                self.tree.column("Mã vé",width=80)
-                self.tree.column("Ngày đặt",width=70)
-                self.tree.column("Ngày hết hạn",width=90,anchor=CENTER)
+                self.tree.column("Mã vé",width=90)
+                self.tree.column("Ngày đặt",width=75,anchor=CENTER)
+                self.tree.column("Ngày hết hạn",width=80,anchor=CENTER)
                 self.tree.column("Trạng thái",width=100)
 
                 self.tree.heading("Mã vé",text="Mã vé")
@@ -1119,7 +1120,7 @@ class UIThanhToan(Frame):
         self.display()
 
     def display(self):
-        Label(self.master, text="Thanh Toán vé tàu", font=15).grid(
+        Label(self.master, text="THANH TOÁN VÉ TÀU", font=15).grid(
             column=0, columnspan=4, row=0)
         Label(self.master, text="Chuyến đi").grid(
             column=0, columnspan=3, row=1)

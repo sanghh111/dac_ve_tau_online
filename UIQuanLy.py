@@ -23,6 +23,7 @@ class DangNhap(Frame):
         Button(self.master, text="Đăng nhập", command=self.dangNhap).grid(
             column=2, row=3, sticky=E)
         self.lb_tb = Label(self.master, text="Đăng nhập không thành công")
+        self.master.title("ĐĂNG NHẬP")
         self.master.mainloop()
 
     def dangNhap(self):
@@ -53,8 +54,7 @@ class ChucNang(Frame):
         self.display()
 
     def display(self):
-        #co chuc nang gi 
-
+        self.master.title("")
 
         helv13 = TkFont.Font(family="Helvetica",size=12)
 
