@@ -1,0 +1,25 @@
+@font-face {
+    font-family: myFont;
+    src: url(./SVN-Effra.ttf);
+}
+
+$bg_navigation: #3e0478;
+$bg_content:  linear-gradient(to right,white,pink);
+$hover : #ea1d63;
+$font: myFont;
+
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: $font;
+}    
+
+body{
+    min-width: 100vw;
+    min-height: 100vh;
+    // background: #611570;
+    background: #fdfcf0;
+}

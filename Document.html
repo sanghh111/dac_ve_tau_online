@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+    <section>
+        <div class="container">
+            <div class="control">
+                <input type="hidden" id="timezone" name="timezone" value="-07:00">
+                <!-- select schedule -->
+                <select id="route" class="route"> 
+                    <option value="1">Sài Gòn to Phú Yên</option>
+                    <option value="2">Phú Yên to Sài Gòn</option>
+                    <option value="3">Sài Gòn to Hà Nội</option>
+                </select>
+                <!-- select date -->
+                <input type="date" id="date">
+                <!--select time-->
+                <select id="time" class="time">
+                    <option value="6h00">06h00</option>
+                    <option value="9h00">09h00</option>
+                    <option value="18h00">18h00</option>
+                </select>
+            </div>
+       
+            <div class="post">
+            <form method="POST">
+                <!--tickets fill here-->
+                <div class="tickets"></div>   
+                
+                <input type="hidden" name="csrfmiddlewaretoken" value="okdK4nEd899WoCL83YZNMaEVmdGRNeYai4YA9yjxzMwzUPPe7JhUjP5MNY80gyZv">
+            </form>
+            <div class="note">
+                <span>Chưa đặt</span>
+                <span>Đang chọn</span>
+                <span>Đã đặt</span>
+                <input class="submit" type="submit" value="Đặt vé">
+            </div>
+        </div>
+    </div>
+    </section>
+    
+    <script src="./script/Data.js"></script>
+    <script src="./script/FilterTicket.js"></script>
+</body></html>
